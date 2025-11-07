@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "./page.css";
 
 interface MenuItem {
   id: number;
@@ -147,7 +148,7 @@ export default function MenuItem() {
       price: "Rp. 7000",
       description:
         "Hidangan tumis kangkung yang dimasak dengan api besar dan fibumbui dengan saus tiram serta bumbu pilihan Ojolali.",
-      category: "Add-on",
+      category: "Vegetables",
       imageUrl: "/images/makanan/cah-kangkung.jpeg",
     },
 
@@ -158,7 +159,7 @@ export default function MenuItem() {
       description:
         "Walaupun ini adalah minuman teh yang sudah umum, namun minuman ini sangat menyegarkan sekali lho....",
       category: "Beverages",
-      imageUrl: "/images/makanan/es-teh.jpeg",
+      imageUrl: "/images/makanan/es-teh.png",
     },
 
     {
@@ -168,7 +169,7 @@ export default function MenuItem() {
       description:
         "Walaupun ini adalah minuman teh yang sudah umum, namun minuman ini sangat menyegarkan sekali lho....",
       category: "Beverages",
-      imageUrl: "/images/makanan/es-teh.jpeg",
+      imageUrl: "/images/makanan/es-teh.png",
     },
 
     {
@@ -197,7 +198,39 @@ export default function MenuItem() {
         </p>
       </div>
 
-      <div className="d-flex justify-content gap-5 mb-8"></div>
+      <div className="d-flex justify-content-center gap-3 mb-5">
+        {["All", "Main Dish", "Beverages", "Vegetables", "Add-on"].map((categories) => (
+          <button
+            key={categories}
+            className={`btn rounded-3 btn-hover-shadow ${filter === categories ? 'btn-danger text-white' : 'btn-outline-secondary'}`}
+            onClick={() => setFilter(categories)}
+          >
+            {categories}
+          </button>
+        ))}
+      </div>
+
+      <div className="row g-4">
+        {filteredMenu.map((item) => (
+          <div className="col-12 col-sm-6 col-md-4 col-lg-3" key={item.id}>
+            <div className="card h-100 card-hover-shadow">
+              <img
+                src={item.imageUrl}
+                className="card-img-top"
+                alt={item.name}
+                style={{ height: "200px", objectFit: "cover" }}
+              />
+              <div className="card-body d-flex flex-column">
+                <h6 className="fw-bold text-danger">{item.price}</h6>
+                <h5 className="card-title">{item.name}</h5>
+                <p className="card-text text-muted small text-truncate-2">
+                  {item.description}
+                </p>  
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
