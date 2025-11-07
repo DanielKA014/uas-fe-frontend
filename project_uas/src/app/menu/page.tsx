@@ -202,7 +202,7 @@ export default function MenuItem() {
         {["All", "Main Dish", "Beverages", "Vegetables", "Add-on"].map((categories) => (
           <button
             key={categories}
-            className={`btn rounded-3 btn-hover-shadow ${filter === categories ? 'btn-danger text-white' : 'btn-outline-secondary'}`}
+            className={`btn rounded-pill btn-hover-shadow ${filter === categories ? 'btn-danger text-white' : 'btn-outline-secondary'}`}
             onClick={() => setFilter(categories)}
           >
             {categories}
