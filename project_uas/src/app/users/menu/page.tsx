@@ -1,6 +1,8 @@
 "use client";
 import { useState } from "react";
+// @ts-ignore: CSS module import without type declarations
 import "bootstrap/dist/css/bootstrap.min.css";
+// @ts-ignore: CSS module import without type declarations
 import "./page.css";
 
 interface MenuItem {

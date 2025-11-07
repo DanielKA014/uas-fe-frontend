@@ -35,7 +35,7 @@ function NavbarComponent() {
                         <Nav.Link href="#reviews" className="nav-link text-white mx-2">Reviews</Nav.Link>
                         <Nav.Link href="#contact" className="nav-link text-white mx-2">Contact</Nav.Link>
                     </Nav>
-                    <Link href="/login">
+                    <Link href="/auth/login">
                         <Button variant="outline-success" className="ms-lg-3 px-4">Login</Button>
                     </Link>
                 </Navbar.Collapse>
