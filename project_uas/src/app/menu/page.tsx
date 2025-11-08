@@ -1,8 +1,6 @@
 "use client";
 import { useState } from "react";
-// @ts-ignore: CSS module import without type declarations
 import "bootstrap/dist/css/bootstrap.min.css";
-// @ts-ignore: CSS module import without type declarations
 import "./page.css";
 
 interface MenuItem {
@@ -15,7 +13,10 @@ interface MenuItem {
 }
 
 export default function MenuItem() {
+
+  {/* default "All" */}
   const [filter, setFilter] = useState<String>("All");
+
   const menuItems: MenuItem[] = [
     {
       id: 1,
@@ -191,7 +192,7 @@ export default function MenuItem() {
       : menuItems.filter((item) => item.category === filter);
 
   return (
-    <div className="container py-5">
+    <div className="container py-5" id="menu">
       <div className="text-center mb-4">
         <h1 className="fw-bold">Our Menu</h1>
         <p className="text-muted">
@@ -223,8 +224,8 @@ export default function MenuItem() {
                 style={{ height: "200px", objectFit: "cover" }}
               />
               <div className="card-body d-flex flex-column">
-                <h6 className="fw-bold text-danger">{item.price}</h6>
-                <h5 className="card-title">{item.name}</h5>
+                <h6 className="fw-bold text-danger fs-4 text-center">{item.price}</h6>
+                <h5 className="card-title text-center fs-5">{item.name}</h5>
                 <p className="card-text text-muted small text-truncate-2">
                   {item.description}
                 </p>  

@@ -1,95 +1,175 @@
+'use client';
 import Image from "next/image";
-import styles from "./page.module.css";
+import { Button, Container, Row, Col, Card } from "react-bootstrap";
+import "bootstrap/dist/css/bootstrap.min.css";
+import { FaDrumstickBite, FaGlassWhiskey, FaCube } from "react-icons/fa";
+import { GiTomato } from "react-icons/gi";
+import "./menu/page.css";
+
 
 export default function Home() {
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
+    <main id="home">
+      {/* Hero section */}
+      <section className="position-relative text-center text-dark">
         <Image
-          className={styles.logo}
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
+          src="/images/hero.png"
+          alt="Hero Image"
+          fill
+          className="object-cover"
+          style={{ zIndex: -1, opacity: 1 }}
           priority
         />
-        <ol>
-          <li>
-            Get started by editing <code>src/app/page.tsx</code>.
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+        <div className="d-flex flex-column justify-content-center align-items-center vh-100">
+          <h1 className="fw-bold display-4 mb-3">
+            Best Food for your taste
+          </h1>
+          <p className="lead mb-4">
+            Discover delectable cuisine and unforgetitable moments in our welcoming, culinary haven.
+          </p>
+          <Button
+            variant="outline-dark"
+            size="lg"
+            className="rounded-pill px-4 py-2"
           >
-            <Image
-              className={styles.logo}
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
+            Explore Menu
+          </Button>
         </div>
-      </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+      </section>
+
+      {/* About Section */}
+      <section className="py-5 bg-white text-center">
+        <Container>
+          <Row className="align-items-center text-md-start text-center">
+            {/* Left side: Image */}
+            <Col md={6} className="mb-4 mb-md-0 text-center">
+              <Image
+                src="/images/page.png"
+                alt="About Us Image"
+                width={400}
+                height={400}
+                className="img-fluid rounded"
+              />
+            </Col>
+
+            {/* Right side: Text */}
+            <Col md={6}>
+              <h2 className="fw-bold mb-4">
+                We provide healthy food for your family & friends.
+              </h2>
+              <p className="text-muted mb-4">
+                It all began in 2001 beside Walikota Lama, where our founders started with a small grill,
+                a family recipe, and a big dream. Through hard times and simple beginnings, they served
+                freshly grilled chicken with warmth that kept customers coming back.
+                <br /><br />
+                In 2003, we moved beside Universitas Tarumanagara (UNTAR), where our little stall grew
+                into a local favorite. Even today, we stay true to our roots — grilling over open flames
+                and serving each dish with heart, passion, and family spirit.
+              </p>
+              <a href="/about" className="btn btn-outline-danger rounded-pill btn-lg">
+                Learn More
+              </a>
+            </Col>
+          </Row>
+        </Container>
+      </section>
+
+
+      {/* Menu section */}
+      <section className="py-5 bg-light text-center">
+        <Container>
+          <h2 className="fw-bold mb-5 mt-2">
+            Browse Our Menu
+          </h2>
+          <Row className="justify-content-center g-4">
+            {/* Main Dish Card */}
+            <Col md={3}>
+              <Card className="border-0 h-100 card-hover-shadow">
+                <Card.Body>
+                  <FaDrumstickBite size={40} className="text-danger mb-3" />
+                  <Card.Title className="fw-bold mb-2">Main Dish</Card.Title>
+                  <Card.Text className="text-muted">
+                    Savor our signature grilled chicken, marinated to perfection and served with delicious sides.
+                  </Card.Text>
+                  <Button variant="link" className="text-danger text-decoration-none">
+                    <a
+                      href={"/menu?category=${encodeURIComponent('Main Dish')}"}
+                      className="btn btn-outline-danger rounded-pill"
+                    >
+                      Explore Menu
+                    </a>
+                  </Button>
+                </Card.Body>
+              </Card>
+            </Col>
+            {/* Beverage Dish Card */}
+            <Col md={3}>
+              <Card className="border-0 card-hover-shadow h-100">
+                <Card.Body>
+                  <FaGlassWhiskey size={40} className="mb-3 text-danger" />
+                  <Card.Title>Drinks</Card.Title>
+                  <Card.Text className="text-muted">
+                    In the new era of technology we look to the future with
+                    certainty and pride for our life.
+                  </Card.Text>
+                  <Button variant="link" className="text-danger text-decoration-none">
+                    <a
+                      href="/menu?category=${encodeURIComponent('Beverages')}"
+                      className="btn btn-outline-danger rounded-pill"
+                    >
+                      Explore Menu
+                    </a>
+                  </Button>
+                </Card.Body>
+              </Card>
+            </Col>
+            {/* Vegetable Dish Card */}
+            <Col md={3}>
+              <Card className="border-0 card-hover-shadow h-100">
+                <Card.Body>
+                  <GiTomato size={40} className="mb-3 text-danger" />
+                  <Card.Title>Vegetables</Card.Title>
+                  <Card.Text className="text-muted">
+                    In the new era of technology we look to the future with
+                    certainty and pride for our life.
+                  </Card.Text>
+                  <Button variant="link" className="text-danger text-decoration-none">
+                    <a
+                      href="/menu?category=${encodeURIComponent('Vegetables')}"
+                      className="btn btn-outline-danger rounded-pill"
+                    >
+                      Explore Menu
+                    </a>
+                  </Button>
+                </Card.Body>
+              </Card>
+            </Col>
+            {/* Add Ons Dish Card */}
+            <Col md={3}>
+              <Card className="border-0 card-hover-shadow h-100">
+                <Card.Body>
+                  <FaCube size={40} className="mb-3 text-danger" />
+                  <Card.Title>Add Ons</Card.Title>
+                  <Card.Text className="text-muted">
+                    In the new era of technology we look to the future with
+                    certainty and pride for our life.
+                  </Card.Text>
+                  <Button variant="link" className="text-danger text-decoration-none">
+                    <a
+                      href={"/menu?category=${encodeURIComponent('Add-on')}"}
+                      className="btn btn-outline-danger rounded-pill"
+                    >
+                      Explore Menu
+                    </a>
+                  </Button>
+                </Card.Body>
+              </Card>
+            </Col>
+          </Row>
+        </Container>
+      </section>
+
+      
+    </main>
   );
 }

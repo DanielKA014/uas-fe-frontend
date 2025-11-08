@@ -1,5 +1,4 @@
 'use client';
-import Link from 'next/link';
 import Image from 'next/image';
 import { Container } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -97,9 +96,7 @@ export default function Footer() {
                 <div className="mb-3">
                     <h6 className="mb-2">Alamat</h6>
                     <p className="mb-0">
-                        Jl. Tanjung Duren Utara No. 14A,  
-                        Sebelah Universitas Tarumanagara (UNTAR),  
-                        Grogol Petamburan, Jakarta Barat  
+                        Jl. Tanjung Gedong No.24 6, RT.6/RW.8, Tomang, Kec. Grogol petamburan, Kota Jakarta Barat, Daerah Khusus Ibukota Jakarta  
                     </p>
                 </div>
 

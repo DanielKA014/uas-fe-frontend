@@ -1,13 +1,19 @@
 'use client';
-import { use } from 'react';
 import { Button, Container, Nav, Navbar } from 'react-bootstrap';
 import Link from 'next/link';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Image from 'next/image';
+import '../globals.css';
 
 function NavbarComponent() {
     return (
-        <Navbar bg="dark" expand="lg" variant="dark" style={{backgroundColor:'#3a3a3a'}} className='py-3 shadow-sm'>
+        <Navbar 
+            bg="dark" 
+            expand="lg" 
+            variant="dark" 
+            style={{backgroundColor:'#3a3a3a', padding: 0, margin: 0}} 
+            className='py-3 shadow-sm m-0 border-0'
+        >
             <Container fluid className='px-4'>
                 <Link
                     href="/"
@@ -29,11 +35,10 @@ function NavbarComponent() {
                         style={{ maxHeight: '100px' }}
                         navbarScroll
                     >
-                        <Nav.Link href="#home" className="nav-link text-white mx-2">Home</Nav.Link>
-                        <Nav.Link href="#about" className="nav-link text-white mx-2">About</Nav.Link>
-                        <Nav.Link href="#menu" className="nav-link text-white mx-2">Menu</Nav.Link>
-                        <Nav.Link href="#reviews" className="nav-link text-white mx-2">Reviews</Nav.Link>
-                        <Nav.Link href="#contact" className="nav-link text-white mx-2">Contact</Nav.Link>
+                        <Nav.Link href="/" className="nav-link text-white mx-2">Home</Nav.Link>
+                        <Nav.Link href="/about" className="nav-link text-white mx-2">About</Nav.Link>
+                        <Nav.Link href="/menu" className="nav-link text-white mx-2">Menu</Nav.Link>
+                        <Nav.Link href="/reviews" className="nav-link text-white mx-2">Reviews</Nav.Link>
                     </Nav>
                     <Link href="/auth/login">
                         <Button variant="outline-success" className="ms-lg-3 px-4">Login</Button>
