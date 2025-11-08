@@ -8,6 +8,10 @@
   line-clamp: 2; 
 }
 
+.card-hover-shadow {
+  box-shadow: 0 2px 6px darkgray;
+}
+
 .btn-hover-shadow, .card-hover-shadow {
   transition: all 0.3s ease !important;
 }
