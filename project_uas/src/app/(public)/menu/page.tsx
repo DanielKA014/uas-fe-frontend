@@ -1,6 +1,8 @@
 "use client";
 import { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { FaStar, FaStarHalfAlt, FaRegStar } from "react-icons/fa";
+import { Modal, Button } from "react-bootstrap";
 import "./page.css";
 
 interface MenuItem {
@@ -13,9 +15,26 @@ interface MenuItem {
 }
 
 export default function MenuItem() {
-
   {/* default "All" */}
   const [filter, setFilter] = useState<String>("All");
+  const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
+  const [showModal, setShowModal] = useState(false);
+  const [rating, setRating] = useState<number>(0);
+  const [hover, setHover] = useState<number>(0);
+  const [newRating, setNewRating] = useState<number>(0);
+  const [comments, setComments] = useState<{ text: string; rating: number }[]>([
+  { text: "The chicken was juicy and flavorful!", rating: 5 },
+  { text: "Loved the sambal!", rating: 4 },
+  { text: "Good portion and worth the price.", rating: 4 },
+]);
+  const [newComment, setNewComment] = useState("");
+
+  const handleCardClick = (item: MenuItem) => {
+    setSelectedItem(item);
+    setShowModal(true);
+  };
+
+  const handleClose = () => setShowModal(false);
 
   const menuItems: MenuItem[] = [
     {
@@ -191,6 +210,14 @@ export default function MenuItem() {
       ? menuItems
       : menuItems.filter((item) => item.category === filter);
 
+  const handleAddComment = () => {
+  if (newComment.trim() && newRating > 0) {
+    setComments([...comments, { text: newComment, rating: newRating }]);
+    setNewComment("");
+    setNewRating(0);
+  }
+};
+
   return (
     <div className="container py-5" id="menu">
       <div className="text-center mb-4">
@@ -213,9 +240,15 @@ export default function MenuItem() {
         ))}
       </div>
 
+      {/* Menu Card Items */}
       <div className="row g-4">
         {filteredMenu.map((item) => (
-          <div className="col-12 col-sm-6 col-md-4 col-lg-3" key={item.id}>
+          <div 
+            className="col-12 col-sm-6 col-md-4 col-lg-3" 
+            key={item.id} 
+            onClick={() => handleCardClick(item)}
+            style={{ cursor: "pointer" }}
+          >
             <div className="card h-100 card-hover-shadow">
               <img
                 src={item.imageUrl}
@@ -234,6 +267,121 @@ export default function MenuItem() {
           </div>
         ))}
       </div>
+
+      {/* Modal for extra Details*/}
+      <Modal
+        show={!!selectedItem}
+        onHide={() => setSelectedItem(null)}
+        centered
+        size="lg"
+      >
+        {selectedItem && (
+          <>
+            <Modal.Header closeButton>
+              <Modal.Title>{selectedItem.name}</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <div className="row">
+                <div className="col-md-5 text-center">
+                  <img
+                    src={selectedItem.imageUrl}
+                    alt={selectedItem.name}
+                    className="img-fluid rounded mb-3"
+                  />
+                  <h5 className="fw-bold text-danger">{selectedItem.price}</h5>
+                </div>
+
+                <div className="col-md-7">
+                  {/* Average Rating */}
+                  <div className="border p-3 rounded mb-3">
+                    <h6 className="fw-bold mb-2">Average Rating</h6>
+                    <div className="d-flex align-items-center mb-2">
+                      {[...Array(5)].map((_, index) => {
+                        const avg = 4.3; // example average rating
+                        const starValue = index + 1;
+                        const isHalf = avg - starValue >= -0.5 && avg - starValue < 0;
+                        return (
+                          <span
+                            key={index}
+                            className="fs-4"
+                            style={{
+                              color:
+                                starValue <= Math.floor(avg)
+                                  ? "#ffc107"
+                                  : isHalf
+                                  ? "linear-gradient(90deg, #ffc107 50%, #e4e5e9 50%)"
+                                  : "#e4e5e9",
+                            }}
+                          >
+                            ★
+                          </span>
+                        );
+                      })}
+                    </div>
+                    <small className="text-muted">120 people rated this</small>
+                  </div>
+
+                  {/* Comments section */}
+                  <div className="border p-3 rounded">
+                    <h6 className="fw-bold mb-3">Customer Comments</h6>
+                    <div
+                      className="mb-3"
+                      style={{ maxHeight: "150px", overflowY: "auto" }}
+                    >
+                      {comments.map((cmt, i) => (
+                        <div key={i} className="mb-2 border-bottom pb-2">
+                          <p className="mb-1">{cmt.text}</p>
+                          <FaStar className="text-warning me-1" />
+                          <small className="text-muted">{cmt.rating}/5</small>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Add comment form */}
+                    <div className="d-flex flex-column flex-sm-row gap-2 align-items-sm-center">
+                      <div className="d-flex align-items-center mb-2 mb-sm-0">
+                        {[...Array(5)].map((_, index) => {
+                          const starValue = index + 1;
+                          return (
+                            <span
+                              key={index}
+                              className="fs-5 me-1"
+                              style={{
+                                cursor: "pointer",
+                                color:
+                                  starValue <= (hover || newRating)
+                                    ? "#ffc107"
+                                    : "#919191ff",
+                              }}
+                              onClick={() => setNewRating(starValue)}
+                              onMouseEnter={() => setHover(starValue)}
+                              onMouseLeave={() => setHover(0)}
+                            >
+                              ★
+                            </span>
+                          );
+                        })}
+                      </div>
+                      <div className="d-flex flex-grow-1">
+                        <input
+                          type="text"
+                          className="form-control me-2"
+                          placeholder="Write your comment..."
+                          value={newComment}
+                          onChange={(e) => setNewComment(e.target.value)}
+                        />
+                        <Button variant="danger" onClick={handleAddComment}>
+                          Send
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </Modal.Body>
+          </>
+        )}
+      </Modal>
     </div>
   );
 }
