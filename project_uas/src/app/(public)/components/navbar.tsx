@@ -3,7 +3,7 @@ import { Button, Container, Nav, Navbar } from 'react-bootstrap';
 import Link from 'next/link';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Image from 'next/image';
-import '../globals.css';
+import '../../globals.css';
 
 function NavbarComponent() {
     return (
