@@ -7,7 +7,7 @@ import React from 'react'
 const page = () => {
   return (
     <div className="parent">
-    <div className="div1"><img src="\images\ayam_bakar_history.jpeg" alt="Ayam Bakar" /></div>
+    <div className="div1"><img src="\images\about.jpeg" alt="Ayam Bakar" /></div>
     <div className="div2">
         <h1>Our history Progress</h1>
         <p>It all began in 2001, in a small food stall tucked beside Walikota Lama. With nothing more than a simple grill, a family recipe, and a big dream, our founders started serving freshly grilled chicken to locals passing by. Every day, the irresistible aroma of smoky, seasoned chicken filled the air, slowly drawing in regular customers who came not just for the food, but for the warmth and friendliness behind every plate. </p> <br />
