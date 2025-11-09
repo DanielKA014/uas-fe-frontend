@@ -1,6 +1,6 @@
 // @ts-ignore: CSS module import without type declarations
 import "bootstrap/dist/css/bootstrap.min.css";
-import "../styles.css"
+import "../../auth/styles.css"
 
 export default function Login() {
   return (
