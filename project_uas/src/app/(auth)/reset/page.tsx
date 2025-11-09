@@ -1,6 +1,6 @@
 // @ts-ignore: CSS module import without type declarations
 import "bootstrap/dist/css/bootstrap.min.css";
-import "../../auth/styles.css"
+import "../styles.css"
 
 export default function ResetPassword() {
   return (
@@ -23,7 +23,7 @@ export default function ResetPassword() {
           <button type="button" className="btn btn-success">Ubah Password</button>
         </div>
         <hr></hr>
-        <a href="/auth/login">Kembali ke halaman login</a>
+        <a href="/login">Kembali ke halaman login</a>
       </div>
     </div>
 

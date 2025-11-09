@@ -2,10 +2,19 @@
 import { Button, Container, Nav, Navbar } from 'react-bootstrap';
 import Link from 'next/link';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import '../../globals.css';
 
 function NavbarComponent() {
+    const pathname = usePathname();
+
+    const navLinks = [
+        { href: '/', label: 'Home' },
+        { href: '/about', label: 'About' },
+        { href: '/menu', label: 'Menu'},
+        { href: '/reviews', label: 'Reviews'}
+    ];
     return (
         <Navbar 
             bg="dark" 
@@ -35,12 +44,22 @@ function NavbarComponent() {
                         style={{ maxHeight: '100px' }}
                         navbarScroll
                     >
-                        <Nav.Link href="/" className="nav-link text-white mx-2">Home</Nav.Link>
-                        <Nav.Link href="/about" className="nav-link text-white mx-2">About</Nav.Link>
-                        <Nav.Link href="/menu" className="nav-link text-white mx-2">Menu</Nav.Link>
-                        <Nav.Link href="/reviews" className="nav-link text-white mx-2">Reviews</Nav.Link>
+                        {navLinks.map(({ href, label }) => {
+                            const isActive = pathname === href;
+                            return (
+                                <Nav.Link
+                                    key={href}
+                                    href={href}
+                                    className={`nav-link rounded py-2 ${
+                                    isActive ? 'nav-link fw-semibold text-dark px-4 mx-3 bg-light rounded-pill' : 'nav-link text-white mx-2'
+                                    }`}
+                                >
+                                    {label}
+                                </Nav.Link>
+                            );
+                        })}
                     </Nav>
-                    <Link href="/auth/login">
+                    <Link href="/login">
                         <Button variant="outline-success" className="ms-lg-3 px-4">Login</Button>
                     </Link>
                 </Navbar.Collapse>

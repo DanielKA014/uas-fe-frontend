@@ -1,16 +1,12 @@
 // @ts-ignore: CSS module import without type declarations
 import "bootstrap/dist/css/bootstrap.min.css";
-import "../../auth/styles.css"
+import "../styles.css"
 
-export default function Register() {
+export default function Login() {
   return (
 
     <div className="parent container d-flex justify-content-center align-items-center h-100">
       <div className="container w-25 form-container py-4 d-flex flex-column align-items-center">
-        <div className="mb-3">
-          <label htmlFor="usernameForm" className="form-label">Nama Anda</label>
-          <input type="text" className="form-control" id="usernameForm" ></input>
-        </div>
         <div className="mb-3">
           <label htmlFor="emailForm" className="form-label">Email</label>
           <input type="email" className="form-control" id="emailForm" ></input>
@@ -19,15 +15,14 @@ export default function Register() {
           <label htmlFor="passwordForm" className="form-label">Password</label>
           <input type="text" className="form-control" id="passwordForm" ></input>
         </div>
-        <div className="mb-3">
-          <label htmlFor="confirmPasswordForm" className="form-label">Konfirmasi Password</label>
-          <input type="text" className="form-control" id="confirmPasswordForm" ></input>
-        </div>
         <div className="mx-auto">
-          <button type="button" className="btn btn-success">Daftar</button>
+          <button type="button" className="btn btn-success">Login</button>
         </div>
         <hr></hr>
-        <a href="/auth/login">Kembali ke halaman login</a>
+        <div className="d-flex justify-content-start">
+             <a href="/reset">Lupa password?</a> 
+        </div>
+        <span>Belum punya akun? <a href="/register">Daftar disini!</a> </span>
       </div>
     </div>
 
