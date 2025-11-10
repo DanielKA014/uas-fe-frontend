@@ -7,8 +7,8 @@ export default function Sidebar() {
   const pathname = usePathname();
 
   const navLinks = [
-    { href: '/admin', label: 'Dashboard' },
-    { href: '/admin/menu', label: 'Control Menu' },
+    { href: '/dashboard', label: 'Dashboard' },
+    { href: '/dashboard/menu', label: 'Control Menu' },
   ];
 
   return (

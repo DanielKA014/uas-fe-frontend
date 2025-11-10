@@ -20,9 +20,9 @@ export default function Login() {
         </div>
         <hr></hr>
         <div className="d-flex justify-content-start">
-             <a href="/auth/reset">Lupa password?</a> 
+             <a href="/reset">Lupa password?</a> 
         </div>
-        <span>Belum punya akun? <a href="/auth/register">Daftar disini!</a> </span>
+        <span>Belum punya akun? <a href="/register">Daftar disini!</a> </span>
       </div>
     </div>
 

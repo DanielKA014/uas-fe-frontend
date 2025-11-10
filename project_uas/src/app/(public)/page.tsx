@@ -6,7 +6,6 @@ import { FaDrumstickBite, FaGlassWhiskey, FaCube } from "react-icons/fa";
 import { GiTomato } from "react-icons/gi";
 import "./menu/page.css";
 
-
 export default function Home() {
   return (
     <main id="home">
@@ -28,13 +27,18 @@ export default function Home() {
             Discover delectable cuisine and unforgetitable moments in our welcoming, culinary haven.
           </p>
           <Button
-            variant="outline-dark"
+            variant="outline-secondary"
             size="lg"
             className="rounded-pill px-4 py-2"
+            color="white"
           >
-            Explore Menu
+            <a href="/menu"
+              style={{color: 'black', textDecoration: 'none'}}
+            >
+              Explore Menu
+            </a>
           </Button>
-        </div>
+        </div>  
       </section>
 
       {/* About Section */}
