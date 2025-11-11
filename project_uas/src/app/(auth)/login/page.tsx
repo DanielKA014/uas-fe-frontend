@@ -17,7 +17,7 @@ export default function Login() {
         </div>
         <div className="mx-auto">
           <button type="button" className="btn btn-success">Login</button>
-        </div>
+        </div>  
         <hr></hr>
         <div className="d-flex justify-content-start">
              <a href="/reset">Lupa password?</a> 

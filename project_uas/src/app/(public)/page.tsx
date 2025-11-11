@@ -48,7 +48,7 @@ export default function Home() {
             {/* Left side: Image */}
             <Col md={6} className="mb-4 mb-md-0 text-center">
               <Image
-                src="/images/page.png"
+                src="/images/page.jpg"
                 alt="About Us Image"
                 width={400}
                 height={400}
