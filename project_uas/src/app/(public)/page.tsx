@@ -80,7 +80,7 @@ export default function Home() {
 
 
       {/* Menu section */}
-      <section className="py-5 bg-light text-center">
+      <section className="py-5 bg-light text-center vh-50">
         <Container>
           <h2 className="fw-bold mb-5 mt-2">
             Browse Our Menu
