@@ -1,222 +1,110 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { FaStar, FaStarHalfAlt, FaRegStar } from "react-icons/fa";
+import { FaStar } from "react-icons/fa";
 import { Modal, Button } from "react-bootstrap";
+import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "./page.css";
 
 interface MenuItem {
   id: number;
   name: string;
-  price: String;
+  price: string;
   description: string;
   category: "Main Dish" | "Beverages" | "Vegetables" | "Add-on";
   imageUrl: string;
 }
 
 export default function MenuItem() {
-  {/* default "All" */}
   const [filter, setFilter] = useState<String>("All");
+  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [rating, setRating] = useState<number>(0);
   const [hover, setHover] = useState<number>(0);
   const [newRating, setNewRating] = useState<number>(0);
   const [comments, setComments] = useState<{ text: string; rating: number }[]>([
-  { text: "The chicken was juicy and flavorful!", rating: 5 },
-  { text: "Loved the sambal!", rating: 4 },
-  { text: "Good portion and worth the price.", rating: 4 },
-]);
+    { text: "The chicken was juicy and flavorful!", rating: 5 },
+    { text: "Loved the sambal!", rating: 4 },
+    { text: "Good portion and worth the price.", rating: 4 },
+  ]);
+
   const [newComment, setNewComment] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 8;
+
+  const formatCategory = (cat: string) => {
+    switch (cat.toLowerCase()) { 
+      case "main-dish":
+      case "main dish":
+        return "Main Dish";
+      case "beverages":
+        return "Beverages";
+      case "add-on":
+      case "add-on":
+        return "Add-on";
+      case "vegetables":
+        return "Vegetables";
+      default:
+        return cat;
+    }
+  };
+
+  useEffect(() => {
+    const fetchFoods = async () => {
+      try {
+        const response = await fetch("http://localhost:3001/api/foods/?limit=100&page=1");
+        const data = await response.json();
+
+        const formatted = data.result.map((item: any) => ({
+          id: item.item_id,
+          name: item.item_name,
+          price: item.dine_in_price,
+          description: item.description,
+          category: formatCategory(item.category),
+          imageUrl: item.image_data_url,
+        }));
+
+        setMenuItems(formatted);
+      } catch (error) {
+        console.error("Error fetching foods:", error);
+      }
+    };
+
+    fetchFoods();
+  }, []);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filter]);
 
   const handleCardClick = (item: MenuItem) => {
     setSelectedItem(item);
     setShowModal(true);
   };
 
-  const handleClose = () => setShowModal(false);
-
-  const menuItems: MenuItem[] = [
-    {
-      id: 1,
-      name: "Ayam Bakar (Without Rice",
-      price: "Rp. 19000",
-      description:
-        "Best Seller Ayam Bakar dengan bumbu khas yang meresap hingga ke dalam daging ayamnya,menjadikan hidangan ini sangat lezat dan menggugah selera.",
-      category: "Main Dish",
-      imageUrl: "/images/makanan/ayam-bakar.jpeg",
-    },
-
-    {
-      id: 2,
-      name: "Ayam bakar Goreng (Without Rice)",
-      price: "Rp. 21000",
-      description:
-        "Andalan warung makan Ayam Bakar Ojolali. Dibuat dengan ayam yang empuk dan berkualitas, hidangan ini dibuat dengan membakar ayam yang dioleskan bumbu khas Ojolali terlebih dahulu, kemudian digoreng dengan baluran telur.",
-      category: "Main Dish",
-      imageUrl: "/images/makanan/ayam-bakar-goreng-abg.jpeg",
-    },
-
-    {
-      id: 3,
-      name: "Ayam Goreng Kremes (Without Rice)",
-      price: "Rp. 21000",
-      description:
-        "Hidangan Ayam goreng yang empuk didalam dan renyah diluar dengan taburan kremes yang gurih.",
-      category: "Main Dish",
-      imageUrl: "/images/makanan/ayam-goreng-kremes.jpeg",
-    },
-
-    {
-      id: 4,
-      name: "Ayam Penyet (Without Rice)",
-      price: "Rp. 19000",
-      description:
-        "Ayam Goreng yang di penyet dengan ulekan agar sedikit pipih, lalu disajikan dengan samabal pedas.",
-      category: "Main Dish",
-      imageUrl: "/images/makanan/ayam-penyet.jpeg",
-    },
-
-    {
-      id: 5,
-      name: "Ayam Gurame/Nila Bakar (Without Rice)",
-      price: "Rp. 22000",
-      description:
-        "Ikan Gurame atau Nila yang dibakar dengan bumbu rempah, hingga dagingnya lembut dan terasa gurih.",
-      category: "Main Dish",
-      imageUrl: "/images/makanan/ikan-gurame-bakar.png",
-    },
-
-    {
-      id: 6,
-      name: "Ayam Gurame/Nila Goreng (Without Rice)",
-      price: "Rp. 22000",
-      description:
-        "Ikan Gurame atau Nila yang digoreng hingga renyah dan gurih. Disajikan dengan Sambal OJolali.",
-      category: "Main Dish",
-      imageUrl: "/images/makanan/ikan-gurame-goreng.png",
-    },
-
-    {
-      id: 7,
-      name: "Iga Bakar (Without Rice)",
-      price: "Rp. 32000",
-      description:
-        "Iga bakar dengan citarasa yang manis menggunakan bumbu-bumbu yang terpilih.",
-      category: "Main Dish",
-      imageUrl: "/images/makanan/iga-bakar.png",
-    },
-
-    {
-      id: 8,
-      name: "Sop Iga (Without Rice)",
-      price: "Rp. 32000",
-      description:
-        "Iga Bakar yang direbus dalam waktu lama dengan bumbu rempah pilihan, sehingga menghasilkan kuah sop yang gurih dan daging iga yang empuk. ",
-      category: "Main Dish",
-      imageUrl: "/images/makanan/sop-iga.png",
-    },
-
-    {
-      id: 9,
-      name: "Tahu",
-      price: "Rp. 1500",
-      description: "Tahu dengan bumbu khas yang menggugah selera.",
-      category: "Add-on",
-      imageUrl: "/images/makanan/tahu.jpeg",
-    },
-
-    {
-      id: 10,
-      name: "Tempe",
-      price: "Rp. 1500",
-      description: "Tempe dengan bumbu khas yang menggugah selera.",
-      category: "Add-on",
-      imageUrl: "/images/makanan/tempe.jpeg",
-    },
-
-    {
-      id: 11,
-      name: "Kremesan",
-      price: "Rp. 1500",
-      description:
-        "adonan Tepung yang digoreng hingga renyah sebagai pelengkap hidangan ayam goreng.",
-      category: "Add-on",
-      imageUrl: "/images/makanan/kremesan.png",
-    },
-
-    {
-      id: 12,
-      name: "Nasi",
-      price: "Rp. 4000",
-      description: "Nasi putih pendamping makanan.",
-      category: "Add-on",
-      imageUrl: "/images/makanan/nasi.jpeg",
-    },
-
-    {
-      id: 13,
-      name: "Sayur Asem",
-      price: "Rp. 3000",
-      description:
-        "Hidangan Kuah yang dibuat dari berbagai sayuran segar dengan rasa asam yang menyegarkan.",
-      category: "Vegetables",
-      imageUrl: "/images/makanan/sayur-asem.png",
-    },
-
-    {
-      id: 14,
-      name: "Cah Kangkung",
-      price: "Rp. 7000",
-      description:
-        "Hidangan tumis kangkung yang dimasak dengan api besar dan fibumbui dengan saus tiram serta bumbu pilihan Ojolali.",
-      category: "Vegetables",
-      imageUrl: "/images/makanan/cah-kangkung.jpeg",
-    },
-
-    {
-      id: 15,
-      name: "Es Teh Manis",
-      price: "Rp. 4000",
-      description:
-        "Walaupun ini adalah minuman teh yang sudah umum, namun minuman ini sangat menyegarkan sekali lho....",
-      category: "Beverages",
-      imageUrl: "/images/makanan/es-teh.png",
-    },
-
-    {
-      id: 16,
-      name: "Es Teh Tawar",
-      price: "Rp. 2000",
-      description:
-        "Walaupun ini adalah minuman teh yang sudah umum, namun minuman ini sangat menyegarkan sekali lho....",
-      category: "Beverages",
-      imageUrl: "/images/makanan/es-teh.png",
-    },
-
-    {
-      id: 17,
-      name: "Aqua",
-      price: "Rp. 4000",
-      description:
-        "Air mineral dalam kemasan botol untuk menemani hidangan Anda.",
-      category: "Beverages",
-      imageUrl: "/images/makanan/aqua.jpeg",
-    },
-  ];
+  const handleClose = () => {
+    setShowModal(false)
+    setSelectedItem(null);
+  };
 
   const filteredMenu =
     filter === "All"
       ? menuItems
       : menuItems.filter((item) => item.category === filter);
 
+  const lastIndex = currentPage * itemsPerPage; 
+  const firstIndex = lastIndex - itemsPerPage;
+  const currentItems = filteredMenu.slice(firstIndex, lastIndex);
+  const totalPages = Math.ceil(filteredMenu.length / itemsPerPage);
+
   const handleAddComment = () => {
-  if (newComment.trim() && newRating > 0) {
-    setComments([...comments, { text: newComment, rating: newRating }]);
-    setNewComment("");
-    setNewRating(0);
-  }
-};
+    if (newComment.trim() && newRating > 0) {
+      setComments([...comments, { text: newComment, rating: newRating }]);
+      setNewComment("");
+      setNewRating(0);
+    }
+  };
 
   return (
     <div className="container py-5" id="menu">
@@ -228,24 +116,31 @@ export default function MenuItem() {
         </p>
       </div>
 
+      {/* Category */}
       <div className="d-flex justify-content-center gap-3 mb-5">
-        {["All", "Main Dish", "Beverages", "Vegetables", "Add-on"].map((categories) => (
-          <button
-            key={categories}
-            className={`btn rounded-pill btn-hover-shadow ${filter === categories ? 'btn-danger text-white' : 'btn-outline-secondary'}`}
-            onClick={() => setFilter(categories)}
-          >
-            {categories}
-          </button>
-        ))}
+        {["All", "Main Dish", "Beverages", "Vegetables", "Add-on"].map(
+          (categories) => (
+            <button
+              key={categories}
+              className={`btn rounded-pill btn-hover-shadow ${
+                filter === categories
+                  ? "btn-danger text-white"
+                  : "btn-outline-secondary"
+              }`}
+              onClick={() => setFilter(categories)}
+            >
+              {categories}
+            </button>
+          )
+        )}
       </div>
 
-      {/* Menu Card Items */}
+      {/* Menu Card */}
       <div className="row g-4">
-        {filteredMenu.map((item) => (
-          <div 
-            className="col-12 col-sm-6 col-md-4 col-lg-3" 
-            key={item.id} 
+        {currentItems.map((item) => (
+          <div
+            className="col-12 col-sm-6 col-md-4 col-lg-3"
+            key={item.id}
             onClick={() => handleCardClick(item)}
             style={{ cursor: "pointer" }}
           >
@@ -257,21 +152,44 @@ export default function MenuItem() {
                 style={{ height: "200px", objectFit: "cover" }}
               />
               <div className="card-body d-flex flex-column">
-                <h6 className="fw-bold text-danger fs-4 text-center">{item.price}</h6>
+                <h6 className="fw-bold text-danger fs-4 text-center">
+                  RP. {item.price}
+                </h6>
                 <h5 className="card-title text-center fs-5">{item.name}</h5>
                 <p className="card-text text-muted small text-truncate-2">
                   {item.description}
-                </p>  
+                </p>
               </div>
             </div>
           </div>
         ))}
       </div>
 
-      {/* Modal for extra Details*/}
+      {/* Pagination */}
+      {filteredMenu.length > 0 && totalPages > 0 && ( 
+        <div className="d-flex justify-content-center mt-4">
+          <div className="btn-group">
+            {[...Array(totalPages)].map((_, i) => (
+              <button
+                key={i}
+                className={`btn ${
+                  currentPage === i + 1
+                    ? "btn-danger text-white"
+                    : "btn-outline-secondary"
+                }`}
+                onClick={() => setCurrentPage(i + 1)}
+              >
+                {i + 1}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Modal */}
       <Modal
-        show={!!selectedItem}
-        onHide={() => setSelectedItem(null)}
+        show={showModal}
+        onHide={handleClose}
         centered
         size="lg"
       >
@@ -297,9 +215,11 @@ export default function MenuItem() {
                     <h6 className="fw-bold mb-2">Average Rating</h6>
                     <div className="d-flex align-items-center mb-2">
                       {[...Array(5)].map((_, index) => {
-                        const avg = 4.3; // example average rating
+                        const avg = 4.3;
                         const starValue = index + 1;
-                        const isHalf = avg - starValue >= -0.5 && avg - starValue < 0;
+                        const isHalf =
+                          avg - starValue >= -0.5 && avg - starValue < 0;
+
                         return (
                           <span
                             key={index}
@@ -321,7 +241,7 @@ export default function MenuItem() {
                     <small className="text-muted">120 people rated this</small>
                   </div>
 
-                  {/* Comments section */}
+                  {/* Comments */}
                   <div className="border p-3 rounded">
                     <h6 className="fw-bold mb-3">Customer Comments</h6>
                     <div
@@ -332,13 +252,15 @@ export default function MenuItem() {
                         <div key={i} className="mb-2 border-bottom pb-2">
                           <p className="mb-1">{cmt.text}</p>
                           <FaStar className="text-warning me-1" />
-                          <small className="text-muted">{cmt.rating}/5</small>
+                          <small className="text-muted">
+                            {cmt.rating}/5
+                          </small>
                         </div>
                       ))}
                     </div>
 
-                    {/* Add comment form */}
-                    <div className="d-flex flex-column flex-sm-row gap-2 align-items-sm-center">
+                    {/* Add comment */}
+                    <div className="d-flex flex-column flex-sm-row gap-2">
                       <div className="d-flex align-items-center mb-2 mb-sm-0">
                         {[...Array(5)].map((_, index) => {
                           const starValue = index + 1;
@@ -362,6 +284,7 @@ export default function MenuItem() {
                           );
                         })}
                       </div>
+
                       <div className="d-flex flex-grow-1">
                         <input
                           type="text"
