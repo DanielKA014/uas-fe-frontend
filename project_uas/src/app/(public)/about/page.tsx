@@ -1,35 +1,46 @@
 "use client";
-import { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Image from "next/image";
-import "./page.css";
 import React from 'react'
+import { Col, Container, Row } from "react-bootstrap";
 
 const page = () => {
   return (
-    <div className="parent">
-    <div className="div1 px-3 rounded">
-      <Image 
-        src="/images/ayam_bakar_history.jpeg"  
-        alt="Ayam Bakar" 
-        className="rounded shadow-lg"
-        width={500}
-        height={400}
-      />
-    </div>
-    <div className="div2 py-5">
-        <h1 className="fs-1 fw-bold">Our History Progress</h1>
-        <p className="text-muted text-justify">It all began in 2001, in a small food stall tucked beside Walikota Lama. With nothing more than a simple grill, a family recipe, and a big dream, our founders started serving freshly grilled chicken to locals passing by. Every day, the irresistible aroma of smoky, seasoned chicken filled the air, slowly drawing in regular customers who came not just for the food, but for the warmth and friendliness behind every plate. 
-        <br/><br/>
-        However, the journey wasn't always easy. The first few years brought many challenges — from unpredictable weather and limited space to tough competition. There were moments when giving up seemed like the only option, but our founders held onto their passion and belief that good food brings people together.
-        <br/><br/>
-        After two years of hard work, in 2003, the business found a new home beside Universitas Tarumanagara (UNTAR). The move marked a turning point. With more space and a growing community of students and locals nearby, our little grilled chicken stall quickly became a favorite spot for anyone craving authentic, freshly grilled goodness.
-        <br/><br/>
-        Over the years, we've stayed true to our roots — using the same traditional recipe, grilling over open flames, and serving with the same dedication that started it all. From humble beginnings beside Walikota Lama to a beloved eatery beside UNTAR, our story is one of perseverance, flavor, and family.
-        <br/><br/>
-        Today, we continue to grill with passion, serve with heart, and welcome every guest like an old friend — because for us, it's not just about chicken, it's about the joy that comes with sharing it.</p>
-    </div>
-    </div>
+    <Container>
+      <Row className="align-items-center text-md-start text-center p-5">
+        {/* Left side: Image */}
+        <Col md={6} className="mb-4 mb-md-0 text-center">
+          <Image
+            src="/images/ayam_bakar_history.jpeg"
+            alt="About Us Image"
+            width={512}
+            height={512}
+            className="img-fluid rounded"
+          />
+        </Col>
+
+        {/* Right side: Text */}
+        <Col md={6} style={{textAlign: 'justify'}}>
+          <h1 className="fs-1 fw-bold">Our History Progress</h1>
+          <p>
+            Semuanya berawal pada tahun 2001, pada saat warung makan ini masih berlokasi di samping eks kantor walikota Jakarta Barat lama (sudah digusur).
+            Warung ini berawal dengan tempat yang kecil. Meskipun demikian, kami tetap berupaya menyajikan hidangan yang terbaik sedari awal hingga sekarang
+            dengan bumbu-bumbu kami yang khas sekali.
+            <br/><br/>
+            Banyak lika-liku yang harus dihadapi dalam menjalankan usaha ini pada tahun awal berdirinya warung ini, seperti keterbatasan tempat dan upaya untuk
+            bertahan dari persaingan. Namun, dengan tekad dan kerja keras, warung ini terus berkembang hingga menjadi cukup terkenal sekarang.
+            <br/><br/>
+            Dua tahun setelah memulai usaha ini, kami memutuskan untuk pindah lokasi dari eks kantor walikota lama ke Jalan Tanjung Gedong di samping gedung 
+            Universitas Tarumanagara (Untar) 1. Keputusan ini adalah salah satu keputusan terbaik yang kami lakukan, warung ini berkembang semakin pesat dan semakin
+            semakin ramai, dengan mayoritas pelanggan kami adalah kalangan mahasiswa. Oleh karena inilah kami menyediakan hidangan dengan harga yang menyesuaikan 
+            kantong pelanggan kami.
+            <br/><br/>
+            Hingga sekarang, kami tetap mempertahankan resep yang sudah digunakan sejak berdirinya warung ini. Selain itu, kami menyediakan hidangan yang lezat serta
+            terjangkau bagi semua kalangan.
+          </p>
+        </Col>
+      </Row>
+    </Container>
   )
 }
 
