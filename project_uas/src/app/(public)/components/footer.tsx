@@ -4,8 +4,51 @@ import { Container } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { FaInstagram, FaWhatsapp } from 'react-icons/fa';
 import { SiGojek, SiGrab, SiShopee } from 'react-icons/si';
+import { useEffect, useState } from 'react';
+
+interface AddressType {
+    id: number;
+    alamat_lengkap: string;
+    kelurahan: string;
+    kabupaten_kota: string;
+    provinsi: string;
+}
 
 export default function Footer() {
+    const [addresses, setAddresses] = useState<AddressType[]>([]);
+
+    useEffect(() => {
+    const fetchAddresses = async () => {
+        try {
+            const response = await fetch("http://localhost:3001/api/address/");
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+
+            if (Array.isArray(data)) {
+                const formatted = data.map((item: any) => ({
+                    id: item.id,
+                    alamat_lengkap: item.alamat_lengkap,
+                    kelurahan: item.kelurahan,
+                    kabupaten_kota: item.kabupaten_kota,
+                    provinsi: item.provinsi,
+                }));
+                setAddresses(formatted);
+            } else {
+                console.error("Expected array but got:", data);
+                setAddresses([]);
+            }
+        } catch (error) {
+            console.error("Error fetching addresses:", error);
+        }
+    };
+
+    fetchAddresses();
+    }, []);
+
     return (
         <footer
             style={{
@@ -95,9 +138,11 @@ export default function Footer() {
                 {/* Alamat */}
                 <div className="mb-3">
                     <h6 className="mb-2">Alamat</h6>
-                    <p className="mb-0">
-                        Jl. Tanjung Gedong No.24 6, RT.6/RW.8, Tomang, Kec. Grogol petamburan, Kota Jakarta Barat, Daerah Khusus Ibukota Jakarta  
-                    </p>
+                    {addresses.map((addr) => (
+                        <p key={addr.id}>
+                            {addr.alamat_lengkap}, {addr.kelurahan}, {addr.kabupaten_kota}, {addr.provinsi}
+                        </p>
+                    ))}
                 </div>
 
                 {/* Divider */}
