@@ -9,28 +9,23 @@ export default function Sidebar() {
   const navLinks = [
     { href: '/dashboard', label: 'Dashboard' },
     { href: '/dashboard/menu', label: 'Control Menu' },
+    { href: '/dashboard/address', label: 'Control Address' }
   ];
 
   return (
     <>
-      {/* Mobile Offcanvas Sidebar */}
+      {/* === Mobile Offcanvas Sidebar === */}
       <div
         className="offcanvas offcanvas-start d-md-none"
         tabIndex={-1}
         id="sidebarOffcanvas"
         aria-labelledby="sidebarOffcanvasLabel"
       >
-        <div className="offcanvas-header bg-white border-bottom">
-          <h5 className="offcanvas-title" id="sidebarOffcanvasLabel">
-            Admin Panel
-          </h5>
-          <button
-            type="button"
-            className="btn-close"
-            data-bs-dismiss="offcanvas"
-            aria-label="Close"
-          ></button>
+        <div className="offcanvas-header border-bottom">
+          <h5 className="fw-semibold">Admin Panel</h5>
+          <button type="button" className="btn-close" data-bs-dismiss="offcanvas"></button>
         </div>
+
         <div className="offcanvas-body d-flex flex-column justify-content-between">
           <nav className="nav flex-column">
             {navLinks.map(({ href, label }) => {
@@ -39,8 +34,8 @@ export default function Sidebar() {
                 <Link
                   key={href}
                   href={href}
-                  className={`nav-link ${
-                    isActive ? 'fw-semibold text-primary' : 'text-dark'
+                  className={`nav-link rounded py-2 px-2 ${
+                    isActive ? 'bg-primary text-white fw-semibold' : 'text-dark'
                   }`}
                   data-bs-dismiss="offcanvas"
                 >
@@ -49,37 +44,41 @@ export default function Sidebar() {
               );
             })}
           </nav>
-          <p className="text-muted text-center small mt-3">
-            © 2025 Ayam Bakar Admin
-          </p>
+
+          <p className="text-muted text-center small mt-3">© 2025 Ayam Bakar Admin</p>
         </div>
       </div>
 
-      {/* Sidebar */}
+      {/* Desktop Sidebar */}
       <aside
-        className="d-none d-md-flex flex-column justify-content-between bg-white shadow position-fixed top-0 start-0 h-100"
+        className="d-none d-md-flex flex-column justify-content-between shadow-sm position-fixed top-0 start-0 h-100 bg-white"
         style={{
           width: '180px',
-          zIndex: 1030,
-          transition: 'width 0.3s ease',
+          zIndex: 10,
+          borderRight: '1px solid #eee',
         }}
       >
         {/* Header */}
-        <div className="p-3 border-bottom">
-          <h5 className="mb-0">Admin Panel</h5>
+        <div className="p-4 border-bottom">
+          <h5 className="fw-bold text-primary m-0">Admin Panel</h5>
         </div>
 
         {/* Nav */}
-        <nav className="nav flex-column p-3">
+        <nav className="nav flex-column p-3 gap-1">
           {navLinks.map(({ href, label }) => {
             const isActive = pathname === href;
             return (
               <Link
                 key={href}
                 href={href}
-                className={`nav-link rounded py-2 ${
-                  isActive ? 'bg-light fw-semibold text-primary' : 'text-muted'
+                className={`nav-link rounded py-2 px-3 ${
+                  isActive
+                    ? 'bg-primary text-white fw-semibold shadow-sm'
+                    : 'text-secondary'
                 }`}
+                style={{
+                  transition: '0.2s ease',
+                }}
               >
                 {label}
               </Link>
@@ -88,20 +87,20 @@ export default function Sidebar() {
         </nav>
 
         {/* Footer */}
-        <p className="text-muted text-center small p-3 mb-0">
-          © 2025 Ayam Bakar Admin
+        <p className="text-muted text-center small p-3 mb-2">
+          © {new Date().getFullYear()} Ayam Bakar Admin
         </p>
       </aside>
 
-      {/* === Mobile Toggle Button === */}
+      {/* Mobile Toggle */}
       <button
-        className="btn btn-outline-secondary d-md-none position-fixed top-0 start-0 m-2"
+        className="btn btn-light border d-md-none position-fixed top-0 start-0 m-2 shadow-sm"
         type="button"
         data-bs-toggle="offcanvas"
         data-bs-target="#sidebarOffcanvas"
         aria-controls="sidebarOffcanvas"
       >
-        <i className="bi bi-list"></i>
+        <i className="bi bi-list fs-4"></i>
       </button>
     </>
   );

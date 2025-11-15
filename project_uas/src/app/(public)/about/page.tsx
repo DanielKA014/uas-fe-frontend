@@ -6,10 +6,11 @@ import { Col, Container, Row } from "react-bootstrap";
 
 const page = () => {
   return (
-    <Container>
-      <Row className="align-items-center text-md-start text-center p-5">
+    <Container className="py-5 px-3">
+      <Row className="align-items-center text-md-start text-center g-4">
+
         {/* Left side: Image */}
-        <Col md={6} className="mb-4 mb-md-0 text-center">
+        <Col md={6} className="text-center">
           <Image
             src="/images/ayam_bakar_history.jpeg"
             alt="About Us Image"
@@ -21,8 +22,8 @@ const page = () => {
 
         {/* Right side: Text */}
         <Col md={6} style={{textAlign: 'justify'}}>
-          <h1 className="fs-1 fw-bold">Our History Progress</h1>
-          <p>
+          <h1 className="fs-1 fw-bold mb-4">Our History Progress</h1>
+          <p style={{ textAlign: "justify", lineHeight: "1.75"}}>
             Semuanya berawal pada tahun 2001, pada saat warung makan ini masih berlokasi di samping eks kantor walikota Jakarta Barat lama (sudah digusur).
             Warung ini berawal dengan tempat yang kecil. Meskipun demikian, kami tetap berupaya menyajikan hidangan yang terbaik sedari awal hingga sekarang
             dengan bumbu-bumbu kami yang khas sekali.

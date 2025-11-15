@@ -42,7 +42,7 @@ export default function Home() {
       </section>
 
       {/* About Section */}
-      <section className="py-5 bg-white text-center">
+      <section className="bg-white text-center" style={{padding: "100px 0"}}>
         <Container>
           <Row className="align-items-center text-md-start text-center">
             {/* Left side: Image */}
@@ -80,7 +80,7 @@ export default function Home() {
 
 
       {/* Menu section */}
-      <section className="py-5 bg-light text-center vh-50">
+      <section className="bg-light text-center vh-70" style={{padding: "100px 0"}}>
         <Container>
           <h2 className="fw-bold mb-5 mt-2">
             Browse Our Menu
