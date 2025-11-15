@@ -15,22 +15,25 @@ interface MenuItem {
   imageUrl: string;
 }
 
+interface Review {
+  comment_id: number;
+  stars: number;
+  comment: string;
+  food_id: number;
+  created_at: string;
+}
+
 export default function MenuItem() {
   const [filter, setFilter] = useState<String>("All");
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
   const [showModal, setShowModal] = useState(false);
-  const [rating, setRating] = useState<number>(0);
-  const [hover, setHover] = useState<number>(0);
+  const [reviews, setReviews] = useState<Review[]>([]);
   const [newRating, setNewRating] = useState<number>(0);
-  const [comments, setComments] = useState<{ text: string; rating: number }[]>([
-    { text: "The chicken was juicy and flavorful!", rating: 5 },
-    { text: "Loved the sambal!", rating: 4 },
-    { text: "Good portion and worth the price.", rating: 4 },
-  ]);
-
+  const [hover, setHover] = useState<number>(0);
   const [newComment, setNewComment] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [loadingReviews, setLoadingReviews] = useState(false);
   const itemsPerPage = 8;
 
   const formatCategory = (cat: string) => {
@@ -50,6 +53,7 @@ export default function MenuItem() {
     }
   };
 
+  // Fetch menu items
   useEffect(() => {
     const fetchFoods = async () => {
       try {
@@ -74,18 +78,81 @@ export default function MenuItem() {
     fetchFoods();
   }, []);
 
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [filter]);
+  // Fetch reviews when modal opens
+  const fetchReviews = async (foodId: number) => {
+    try {
+      setLoadingReviews(true);
+      const response = await fetch(`http://localhost:3001/api/food-reviews/${foodId}`);
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch reviews');
+      }
+      
+      const data = await response.json();
+      setReviews(data.reviews || data || []);
+    } catch (error) {
+      console.error("Error fetching reviews:", error);
+      setReviews([]);
+    } finally {
+      setLoadingReviews(false);
+    }
+  };
 
-  const handleCardClick = (item: MenuItem) => {
+  const handleCardClick = async (item: MenuItem) => {
     setSelectedItem(item);
     setShowModal(true);
+    await fetchReviews(item.id);
   };
 
   const handleClose = () => {
-    setShowModal(false)
+    setShowModal(false);
     setSelectedItem(null);
+    setReviews([]);
+    setNewRating(0);
+    setNewComment("");
+  };
+
+  const handleAddReview = async () => {
+    if (!selectedItem || !newComment.trim() || newRating === 0) {
+      alert("Please provide both rating and comment");
+      return;
+    }
+
+    try {
+      const response = await fetch("http://localhost:3001/api/food-reviews/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          stars: newRating,
+          comment: newComment,
+          food_id: selectedItem.id,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to add review");
+      }
+
+      const newReview = await response.json();
+      
+      // Add new review to the list
+      setReviews(prev => [newReview, ...prev]);
+      setNewComment("");
+      setNewRating(0);
+      alert("Review added successfully!");
+    } catch (error) {
+      console.error("Error adding review:", error);
+      alert("Failed to add review");
+    }
+  };
+
+  // Calculate average rating
+  const calculateAverageRating = () => {
+    if (reviews.length === 0) return 0;
+    const total = reviews.reduce((sum, review) => sum + review.stars, 0);
+    return total / reviews.length;
   };
 
   const filteredMenu =
@@ -98,13 +165,12 @@ export default function MenuItem() {
   const currentItems = filteredMenu.slice(firstIndex, lastIndex);
   const totalPages = Math.ceil(filteredMenu.length / itemsPerPage);
 
-  const handleAddComment = () => {
-    if (newComment.trim() && newRating > 0) {
-      setComments([...comments, { text: newComment, rating: newRating }]);
-      setNewComment("");
-      setNewRating(0);
-    }
-  };
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filter]);
+
+  const averageRating = calculateAverageRating();
+  const totalRatings = reviews.length;
 
   return (
     <div className="container py-5" id="menu">
@@ -206,7 +272,8 @@ export default function MenuItem() {
                     alt={selectedItem.name}
                     className="img-fluid rounded mb-3"
                   />
-                  <h5 className="fw-bold text-danger">{selectedItem.price}</h5>
+                  <h5 className="fw-bold text-danger">RP. {selectedItem.price}</h5>
+                  <p className="text-muted small">{selectedItem.description}</p>
                 </div>
 
                 <div className="col-md-7">
@@ -215,89 +282,119 @@ export default function MenuItem() {
                     <h6 className="fw-bold mb-2">Average Rating</h6>
                     <div className="d-flex align-items-center mb-2">
                       {[...Array(5)].map((_, index) => {
-                        const avg = 4.3;
                         const starValue = index + 1;
-                        const isHalf =
-                          avg - starValue >= -0.5 && avg - starValue < 0;
+                        const isHalf = averageRating - starValue >= -0.5 && averageRating - starValue < 0;
 
                         return (
                           <span
                             key={index}
                             className="fs-4"
                             style={{
-                              color:
-                                starValue <= Math.floor(avg)
-                                  ? "#ffc107"
-                                  : isHalf
-                                  ? "linear-gradient(90deg, #ffc107 50%, #e4e5e9 50%)"
-                                  : "#e4e5e9",
+                              color: starValue <= Math.floor(averageRating)
+                                ? "#ffc107"
+                                : isHalf
+                                ? "#ffc107" // You can implement half stars with CSS
+                                : "#e4e5e9",
                             }}
                           >
                             ★
                           </span>
                         );
                       })}
+                      <span className="ms-2 fw-bold">
+                        {averageRating.toFixed(1)}/5
+                      </span>
                     </div>
-                    <small className="text-muted">120 people rated this</small>
+                    <small className="text-muted">
+                      {totalRatings} {totalRatings === 1 ? 'person' : 'people'} rated this
+                    </small>
                   </div>
 
-                  {/* Comments */}
+                  {/* Reviews */}
                   <div className="border p-3 rounded">
-                    <h6 className="fw-bold mb-3">Customer Comments</h6>
-                    <div
-                      className="mb-3"
-                      style={{ maxHeight: "150px", overflowY: "auto" }}
-                    >
-                      {comments.map((cmt, i) => (
-                        <div key={i} className="mb-2 border-bottom pb-2">
-                          <p className="mb-1">{cmt.text}</p>
-                          <FaStar className="text-warning me-1" />
-                          <small className="text-muted">
-                            {cmt.rating}/5
-                          </small>
+                    <h6 className="fw-bold mb-3">Customer Reviews</h6>
+                    
+                    {loadingReviews ? (
+                      <div className="text-center py-3">
+                        <div className="spinner-border text-primary" role="status">
+                          <span className="visually-hidden">Loading reviews...</span>
                         </div>
-                      ))}
-                    </div>
+                      </div>
+                    ) : (
+                      <>
+                        <div
+                          className="mb-3"
+                          style={{ maxHeight: "150px", overflowY: "auto" }}
+                        >
+                          {reviews.length === 0 ? (
+                            <p className="text-muted text-center">No reviews yet. Be the first to review!</p>
+                          ) : (
+                            reviews.map((review) => (
+                              <div key={review.comment_id} className="mb-2 border-bottom pb-2">
+                                <div className="d-flex align-items-center mb-1">
+                                  {[...Array(5)].map((_, index) => (
+                                    <FaStar 
+                                      key={index}
+                                      className={index < review.stars ? "text-warning" : "text-muted"}
+                                      size={14}
+                                    />
+                                  ))}
+                                  <small className="text-muted ms-2">
+                                    {review.stars}/5
+                                  </small>
+                                </div>
+                                <p className="mb-1 small">{review.comment}</p>
+                                <small className="text-muted">
+                                  {new Date(review.created_at).toLocaleDateString()}
+                                </small>
+                              </div>
+                            ))
+                          )}
+                        </div>
 
-                    {/* Add comment */}
-                    <div className="d-flex flex-column flex-sm-row gap-2">
-                      <div className="d-flex align-items-center mb-2 mb-sm-0">
-                        {[...Array(5)].map((_, index) => {
-                          const starValue = index + 1;
-                          return (
-                            <span
-                              key={index}
-                              className="fs-5 me-1"
-                              style={{
-                                cursor: "pointer",
-                                color:
-                                  starValue <= (hover || newRating)
-                                    ? "#ffc107"
-                                    : "#919191ff",
-                              }}
-                              onClick={() => setNewRating(starValue)}
-                              onMouseEnter={() => setHover(starValue)}
-                              onMouseLeave={() => setHover(0)}
+                        {/* Add review */}
+                        <div className="d-flex flex-column gap-2">
+                          <div className="d-flex align-items-center">
+                            <span className="me-2 small">Your rating:</span>
+                            {[...Array(5)].map((_, index) => {
+                              const starValue = index + 1;
+                              return (
+                                <span
+                                  key={index}
+                                  className="fs-5 me-1"
+                                  style={{
+                                    cursor: "pointer",
+                                    color: starValue <= (hover || newRating) ? "#ffc107" : "#919191ff",
+                                  }}
+                                  onClick={() => setNewRating(starValue)}
+                                  onMouseEnter={() => setHover(starValue)}
+                                  onMouseLeave={() => setHover(0)}
+                                >
+                                  ★
+                                </span>
+                              );
+                            })}
+                          </div>
+
+                          <div className="d-flex gap-2">
+                            <input
+                              type="text"
+                              className="form-control"
+                              placeholder="Write your review..."
+                              value={newComment}
+                              onChange={(e) => setNewComment(e.target.value)}
+                            />
+                            <Button 
+                              variant="danger" 
+                              onClick={handleAddReview}
+                              disabled={!newComment.trim() || newRating === 0}
                             >
-                              ★
-                            </span>
-                          );
-                        })}
-                      </div>
-
-                      <div className="d-flex flex-grow-1">
-                        <input
-                          type="text"
-                          className="form-control me-2"
-                          placeholder="Write your comment..."
-                          value={newComment}
-                          onChange={(e) => setNewComment(e.target.value)}
-                        />
-                        <Button variant="danger" onClick={handleAddComment}>
-                          Send
-                        </Button>
-                      </div>
-                    </div>
+                              Send
+                            </Button>
+                          </div>
+                        </div>
+                      </>
+                    )}
                   </div>
                 </div>
               </div>
