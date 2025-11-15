@@ -58,6 +58,7 @@ export default function MenuItem() {
     const fetchFoods = async () => {
       try {
         const response = await fetch("http://localhost:3001/api/foods/?limit=100&page=1");
+          
         const data = await response.json();
 
         const formatted = data.result.map((item: any) => ({
