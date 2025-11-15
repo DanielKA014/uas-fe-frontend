@@ -14,6 +14,14 @@ interface AddressType {
     provinsi: string;
 }
 
+export function decodeHtml(str: string) {
+  if (typeof window === "undefined") return str;
+
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(str, "text/html");
+  return doc.documentElement.textContent.toString();
+}
+
 export default function Footer() {
     const [addresses, setAddresses] = useState<AddressType[]>([]);
 
@@ -140,7 +148,7 @@ export default function Footer() {
                     <h6 className="mb-2">Alamat</h6>
                     {addresses.map((addr) => (
                         <p key={addr.id}>
-                            {addr.alamat_lengkap}, {addr.kelurahan}, {addr.kabupaten_kota}, {addr.provinsi}
+                            {decodeHtml(`${addr.alamat_lengkap}, ${addr.kelurahan}, ${addr.kabupaten_kota}, ${addr.provinsi}`)}
                         </p>
                     ))}
                 </div>

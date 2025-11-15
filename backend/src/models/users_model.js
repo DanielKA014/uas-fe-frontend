@@ -13,7 +13,7 @@ exports.findAll = async () => {
 
 exports.findUserById = async (userId) => {
     try{
-        const sqlQuery = 'SELECT id, username, email, role, created_at, updated_at FROM users WHERE id = $1'
+        const sqlQuery = 'SELECT username, role, created_at, updated_at FROM users WHERE id = $1'
         const value = [userId]
         const res = await pool.query(sqlQuery, value)
         

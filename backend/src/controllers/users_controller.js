@@ -14,18 +14,18 @@ exports.userLogin = async (req, res, next) => {
        
         const user = await usersModel.findUserByEmail(email);
         if (!user){
-            return res.status(401).send("Invalid email or password!")
+            return res.status(401).json({message: "Invalid email or password!"})
         }
         
         const passwordValid = await pwd.checkDbHash(password, user.password);
 
         if (!user || !passwordValid){
-            return res.status(401).send("Invalid email or password!");
+            return res.status(401).json({message: "Invalid email or password!"});
         }
 
         const jwtToken = await auth.generateToken(user.id)
         if(!jwtToken){
-            return res.status(401).send('Failed to generate token!')
+            return res.status(401).json({message: 'Failed to generate token!'})
         }
 
         return res.status(200).json({token: jwtToken})
@@ -38,15 +38,15 @@ exports.userLogout = async (req, res, next) => {
     try {
         const header = req.headers['authorization']
         if (!header || !header.startsWith('Bearer ')){
-            return res.status(400).send("Invalid token!");
+            return res.status(400).json({message: "Invalid token!"});
         }
 
         const token = header.split(' ')[1];
         const blacklisted = await addToBlacklist(token);
         if (!blacklisted){
-            return res.status(500).send("Failed to log out!")
+            return res.status(500).json({message: "Failed to log out!"})
         } else{
-            return res.status(200).send("Successfully logged out from current session.")
+            return res.status(200).json({message: "Successfully logged out from current session."})
         }
     } catch (err){
         return next(err);
@@ -54,7 +54,7 @@ exports.userLogout = async (req, res, next) => {
 }
 
 exports.getAllUsers = async (req, res, next) =>{
-    console.log('attached current user', req.user)
+    // console.log('attached current user', req.user)
     try {
         const users = await usersModel.findAll();
 
@@ -62,6 +62,16 @@ exports.getAllUsers = async (req, res, next) =>{
     } catch (err) {
         return next(err);
     }  
+}
+
+exports.getCurrentUser = async (req, res, next) => {
+    try{
+        const user = req.user
+        if (!user) return res.status(401).send("You\'re not logged in!");
+        else return res.status(200).json(user);
+    } catch (err){
+        return next(err);
+    }
 }
 
 exports.createUser = async (req, res, next) => {
@@ -79,7 +89,7 @@ exports.createUser = async (req, res, next) => {
 
         const dbEmail = await usersModel.findUserByEmail(email);
         if (dbEmail){
-            return res.status(409).send("Email already exists!");
+            return res.status(409).json({message: "Email already exists!"});
         }
 
         const confirmMatched = (password === confirm_password) ? true : false
@@ -88,7 +98,7 @@ exports.createUser = async (req, res, next) => {
         if (confirmMatched){
             hashedPassword = await pass.hashPassword(password)
         } else{
-            return res.status(400).send("Password and confirm password doesn't match!")
+            return res.status(400).json({message: "Password and confirm password doesn't match!"})
         }
        
         const created = await usersModel.createUser(
@@ -97,7 +107,7 @@ exports.createUser = async (req, res, next) => {
             hashedPassword,
         )   
 
-        if (created) return res.status(201).send("User created successfully.");
+        if (created) return res.status(201).json({message: "User created successfully."});
     } catch (err) {
         return next(err);
     }
