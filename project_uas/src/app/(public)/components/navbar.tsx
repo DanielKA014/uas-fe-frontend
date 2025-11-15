@@ -20,10 +20,11 @@ function NavbarComponent() {
             bg="dark" 
             expand="lg" 
             variant="dark" 
+            fixed='top'
             style={{backgroundColor:'#3a3a3a', padding: 0, margin: 0}} 
-            className='py-3 shadow-sm m-0 border-0'
+            className='py-2 shadow-sm m-0 border-0'
         >
-            <Container fluid className='px-4'>
+            <Container fluid className='px-3'>
                 <Link
                     href="/"
                     className="d-flex align-items-center text-white text-decoration-none"
@@ -31,11 +32,13 @@ function NavbarComponent() {
                     <Image
                         src="/images/logo.png"
                         alt="Ayam Bakar Ojolali Logo"
-                        width={60}
-                        height={60}
+                        width={48}
+                        height={48}
                         className="me-2"
                     />
-                    <span className="fw-semibold fs-2 fst-italic">Ayam Bakar Ojolali</span>
+                    <span className="fw-semibold fs-2 fst-italic">
+                        Ayam Bakar Ojolali
+                    </span>
                 </Link>
                 <Navbar.Toggle aria-controls="navbarScroll" className='border-0' />
                 <Navbar.Collapse id="navbarScroll">
@@ -50,8 +53,8 @@ function NavbarComponent() {
                                 <Nav.Link
                                     key={href}
                                     href={href}
-                                    className={`nav-link rounded py-2 ${
-                                    isActive ? 'nav-link fw-semibold text-dark px-4 mx-3 bg-light rounded-pill' : 'nav-link text-white mx-2'
+                                    className={`nav-link rounded py-1 px-3 ${
+                                    isActive ? 'fw-semibold text-dark mx-2 bg-light rounded-pill    ' : 'text-white mx-2'
                                     }`}
                                 >
                                     {label}
