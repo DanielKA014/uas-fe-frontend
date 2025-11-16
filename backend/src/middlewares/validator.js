@@ -1,6 +1,8 @@
 const { body} = require('express-validator')
 
 function checkDecimal(value) {
+    if (value === undefined || value === null) return true
+
     const stringValue = String(value); 
     const parts = stringValue.split('.');
     const integerPart = parts[0];

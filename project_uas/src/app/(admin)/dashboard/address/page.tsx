@@ -1,126 +1,174 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
 
+const BASE_URL = "http://localhost:3001/api/address";
+
+// Helper to get auth headers (assumes token is in localStorage)
+const getAuthHeaders = () => {
+  const token = localStorage.getItem('token'); // Adjust if your token key differs
+  return {
+    'Content-Type': 'application/json',
+    ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+  };
+};
+
 export default function AddressPage() {
-  const [mainAddress, setMainAddress] = useState(
-    "Jl. Letjen S. Parman No.1, Grogol, Jakarta Barat"
-  );
-
-  const [branches, setBranches] = useState<string[]>([]);
+  const [addresses, setAddresses] = useState<any[]>([]);
   const [showModal, setShowModal] = useState(false);
+  const [editId, setEditId] = useState<number | null>(null);
+  const [error, setError] = useState<string | null>(null); // For displaying errors
 
-  // Radio: "main" | "branch"
-  const [type, setType] = useState<"main" | "branch">("branch");
+  // Form states
+  const [alamatLengkap, setAlamatLengkap] = useState("");
+  const [kelurahan, setKelurahan] = useState("");
+  const [kabupatenKota, setKabupatenKota] = useState("");
+  const [provinsi, setProvinsi] = useState("");
 
-  const [value, setValue] = useState("");
-  const [editIndex, setEditIndex] = useState<number | null>(null);
+  // Load data from backend
+  const fetchAddresses = async () => {
+    try {
+      const res = await fetch(BASE_URL);
+      if (!res.ok) throw new Error(`Failed to fetch: ${res.status}`);
+      const data = await res.json();
+      setAddresses(data);
+      setError(null);
+    } catch (err) {
+      console.error("Failed fetching addresses", err);
+      setError("Failed to load addresses. Please try again.");
+    }
+  };
+
+  useEffect(() => {
+    fetchAddresses();
+  }, []);
 
   // Open modal for add
   const openAddModal = () => {
-    setType("branch");
-    setValue("");
-    setEditIndex(null);
+    setEditId(null);
+    setAlamatLengkap("");
+    setKelurahan("");
+    setKabupatenKota("");
+    setProvinsi("");
     setShowModal(true);
+    setError(null);
   };
 
-  // Open modal for editing branch
-  const openEditBranch = (index: number) => {
-    setType("branch");
-    setValue(branches[index]);
-    setEditIndex(index);
+  // Open modal for edit
+  const openEditModal = (item: any) => {
+    setEditId(item.id);
+    setAlamatLengkap(item.alamat_lengkap);
+    setKelurahan(item.kelurahan);
+    setKabupatenKota(item.kabupaten_kota);
+    setProvinsi(item.provinsi);
     setShowModal(true);
+    setError(null);
   };
 
-  // Open modal for editing main address
-  const openEditMain = () => {
-    setType("main");
-    setValue(mainAddress);
-    setEditIndex(null);
-    setShowModal(true);
-  };
+  // Save (Add / Edit)
+  const handleSave = async () => {
+    const body = {
+      alamat_lengkap: alamatLengkap,
+      kelurahan,
+      kabupaten_kota: kabupatenKota,
+      provinsi,
+    };
 
-  const handleSave = () => {
-    if (!value.trim()) return;
+    try {
+      const url = editId === null ? `${BASE_URL}/add` : `${BASE_URL}/${editId}/update`;
+      const method = editId === null ? "POST" : "PUT";
+      const res = await fetch(url, {
+        method,
+        headers: getAuthHeaders(), // Added auth headers
+        body: JSON.stringify(body),
+      });
 
-    if (type === "main") {
-      setMainAddress(value);
-    } else {
-      if (editIndex !== null) {
-        // Edit existing branch
-        const updated = [...branches];
-        updated[editIndex] = value;
-        setBranches(updated);
-      } else {
-        // Add new branch
-        setBranches([...branches, value]);
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || `Failed: ${res.status}`);
       }
-    }
 
-    setShowModal(false);
-    setValue("");
-    setEditIndex(null);
+      setShowModal(false);
+      fetchAddresses(); // Refresh list
+      setError(null);
+    } catch (err: any) {
+      console.error("Save failed", err);
+      setError(err.message || "Save failed. Check authentication or try again.");
+    }
   };
 
-  const deleteBranch = (index: number) => {
-    if (!confirm("Delete this branch?")) return;
-    const updated = branches.filter((_, i) => i !== index);
-    setBranches(updated);
+  // Delete
+  const deleteAddress = async (id: number) => {
+    if (!confirm("Delete this address?")) return;
+
+    try {
+      const res = await fetch(`${BASE_URL}/${id}/delete`, {
+        method: "DELETE",
+        headers: getAuthHeaders(), // Added auth headers (no body needed)
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || `Failed: ${res.status}`);
+      }
+
+      fetchAddresses(); // Refresh list
+      setError(null);
+    } catch (err: any) {
+      console.error("Delete failed", err);
+      setError(err.message || "Delete failed. Check authentication or try again.");
+    }
   };
 
   return (
     <div className="container" style={{ paddingTop: 10 }}>
       <h3 className="fw-bold mb-4">Control Address</h3>
 
-      {/* Main Address */}
+      {/* Error Display */}
+      {error && <div className="alert alert-danger">{error}</div>}
+
+      {/* LIST ADDRESS */}
       <div className="card shadow-sm mb-4">
-        <div className="card-body d-flex justify-content-between align-items-start">
-          <div>
-            <h5 className="fw-semibold">Main Address</h5>
-            <p className="mt-2">{mainAddress}</p>
-          </div>
+        <div className="card-body">
+          <h5 className="fw-semibold mb-3">Address List</h5>
 
-          <button className="btn btn-sm btn-outline-primary" onClick={openEditMain}>
-            Edit
-          </button>
-        </div>
-      </div>
-
-      {/* Branch List */}
-      {branches.length > 0 && (
-        <div className="card shadow-sm mb-4">
-          <div className="card-body">
-            <h5 className="fw-semibold mb-3">Branch Addresses</h5>
-
-            {branches.map((branch, i) => (
+          {addresses.length === 0 ? (
+            <p className="text-muted">No address yet.</p>
+          ) : (
+            addresses.map((item, i) => (
               <div
-                key={i}
+                key={item.id}
                 className="d-flex justify-content-between align-items-center border rounded p-2 mb-2 bg-light"
               >
-                <span>{branch}</span>
+                <div>
+                  <b>{item.alamat_lengkap}</b>
+                  <div className="text-muted small">
+                    {item.kelurahan}, {item.kabupaten_kota}, {item.provinsi}
+                  </div>
+                </div>
 
                 <div className="d-flex gap-2">
                   <button
                     className="btn btn-sm btn-outline-secondary"
-                    onClick={() => openEditBranch(i)}
+                    onClick={() => openEditModal(item)}
                   >
                     Edit
                   </button>
                   <button
                     className="btn btn-sm btn-outline-danger"
-                    onClick={() => deleteBranch(i)}
+                    onClick={() => deleteAddress(item.id)}
                   >
                     Delete
                   </button>
                 </div>
               </div>
-            ))}
-          </div>
+            ))
+          )}
         </div>
-      )}
+      </div>
 
-      {/* Floating Add Button */}
+      {/* ADD BUTTON */}
       <button
         className="btn btn-primary rounded-circle shadow-lg position-fixed"
         style={{
@@ -136,80 +184,59 @@ export default function AddressPage() {
         +
       </button>
 
-      {/* Modal */}
+      {/* MODAL */}
       {showModal && (
-        <div
-          className="modal fade show d-block"
-          style={{ background: "rgba(0,0,0,0.3)" }}
-        >
+        <div className="modal fade show d-block" style={{ background: "rgba(0,0,0,0.3)" }}>
           <div className="modal-dialog">
             <div className="modal-content">
 
               <div className="modal-header">
                 <h5 className="modal-title">
-                  {editIndex !== null
-                    ? "Edit Address"
-                    : "Add New Address"}
+                  {editId === null ? "Add New Address" : "Edit Address"}
                 </h5>
-                <button
-                  className="btn-close"
-                  onClick={() => setShowModal(false)}
-                ></button>
+                <button className="btn-close" onClick={() => setShowModal(false)}></button>
               </div>
 
               <div className="modal-body">
 
-                {/* Radio Options */}
-                <div className="mb-3">
-                  <label className="fw-semibold d-block mb-2">
-                    Address Type:
-                  </label>
+                <label className="fw-semibold">Alamat Lengkap</label>
+                <input
+                  type="text"
+                  className="form-control mb-3"
+                  value={alamatLengkap}
+                  onChange={(e) => setAlamatLengkap(e.target.value)}
+                />
 
-                  <div className="form-check">
-                    <input
-                      type="radio"
-                      className="form-check-input"
-                      id="radioMain"
-                      checked={type === "main"}
-                      onChange={() => setType("main")}
-                    />
-                    <label className="form-check-label" htmlFor="radioMain">
-                      Main Address
-                    </label>
-                  </div>
+                <label className="fw-semibold">Kelurahan</label>
+                <input
+                  type="text"
+                  className="form-control mb-3"
+                  value={kelurahan}
+                  onChange={(e) => setKelurahan(e.target.value)}
+                />
 
-                  <div className="form-check mt-2">
-                    <input
-                      type="radio"
-                      className="form-check-input"
-                      id="radioBranch"
-                      checked={type === "branch"}
-                      onChange={() => setType("branch")}
-                    />
-                    <label className="form-check-label" htmlFor="radioBranch">
-                      Branch Address
-                    </label>
-                  </div>
-                </div>
+                <label className="fw-semibold">Kabupaten / Kota</label>
+                <input
+                  type="text"
+                  className="form-control mb-3"
+                  value={kabupatenKota}
+                  onChange={(e) => setKabupatenKota(e.target.value)}
+                />
 
-                {/* Input */}
+                <label className="fw-semibold">Provinsi</label>
                 <input
                   type="text"
                   className="form-control"
-                  placeholder="Enter address..."
-                  value={value}
-                  onChange={(e) => setValue(e.target.value)}
+                  value={provinsi}
+                  onChange={(e) => setProvinsi(e.target.value)}
                 />
+
               </div>
 
               <div className="modal-footer">
-                <button
-                  className="btn btn-secondary"
-                  onClick={() => setShowModal(false)}
-                >
+                <button className="btn btn-secondary" onClick={() => setShowModal(false)}>
                   Cancel
                 </button>
-
                 <button className="btn btn-primary" onClick={handleSave}>
                   Save
                 </button>
