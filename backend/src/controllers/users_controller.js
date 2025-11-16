@@ -5,31 +5,54 @@ const { validationResult } = require('express-validator');
 const pwd = require('../utils/password_encryptor.js')
 const auth = require('../middlewares/authenticate.js')
 
+
 exports.userLogin = async (req, res, next) => {
     try {
         const {
             email,
             password
         } = req.body
+
+        console.log("Login attemp for email:", email);
+        console.log("Provided Password:", password);
        
         const user = await usersModel.findUserByEmail(email);
+        console.log("User found:", user);
+
         if (!user){
+            console.log("No user found with email:", email);
             return res.status(401).json({message: "Invalid email or password!"})
         }
+
+        console.log("Stored hashed password:", user.password);
         
         const passwordValid = await pwd.checkDbHash(password, user.password);
+        console.log("Password validation result:", passwordValid);
 
-        if (!user || !passwordValid){
+        if (!passwordValid){ //!user w hapus karena udah di cek di bagian atas
+            console.log("Password validation failed");
             return res.status(401).json({message: "Invalid email or password!"});
         }
 
-        const jwtToken = await auth.generateToken(user.id)
+        const jwtToken = await auth.generateToken(user)
         if(!jwtToken){
             return res.status(401).json({message: 'Failed to generate token!'})
         }
 
-        return res.status(200).json({token: jwtToken})
+        console.log("Login successful for user:", user.email);
+
+        return res.status(200).json({
+            message: "Login Successful",
+            token: jwtToken,
+            user: {
+                id: user.id,
+                username: user.username,
+                email: user.email,
+                role: user.role
+            }
+        });
     } catch (err) {
+        console.error("Login error:", err);
         return next(err);
     }
 }
