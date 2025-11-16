@@ -69,10 +69,10 @@ exports.updateAddressById = async (req, res, next) => {
         } = req.body;
 
         const updates = {};
-        if (alamat_lengkap !== undefined) updates.alamat_lengkap = alamat_lengkap;
-        if (kelurahan !== undefined) updates.kelurahan = kelurahan;
-        if (kabupaten_kota !== undefined) updates.kabupaten_kota = kabupaten_kota;
-        if (provinsi !== undefined) updates.provinsi = provinsi;
+        if (alamat_lengkap !== undefined && alamat_lengkap !== null) updates.alamat_lengkap = alamat_lengkap;
+        if (kelurahan !== undefined && kelurahan !== null) updates.kelurahan = kelurahan;
+        if (kabupaten_kota !== undefined && kabupaten_kota !== null) updates.kabupaten_kota = kabupaten_kota;
+        if (provinsi !== undefined && provinsi !== null) updates.provinsi = provinsi;
 
         if (Object.keys(updates).length === 0) {
             return res.status(400).json({ message: "No valid update fields provided." });
