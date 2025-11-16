@@ -13,10 +13,9 @@ exports.findAll = async () => {
 
 exports.findUserById = async (userId) => {
     try{
-        const sqlQuery = 'SELECT username, role, created_at, updated_at FROM users WHERE id = $1'
-        const value = [userId]
-        const res = await pool.query(sqlQuery, value)
-        
+        const sqlQuery = 'SELECT id, username, email, password, role, created_at, updated_at FROM users WHERE id = $1'
+        //const value = [userId]
+        const res = await pool.query(sqlQuery, [userId])
         return res.rows[0];
     } catch (err){
         throw new Error(`Failed to fetch user with user id ${userId} `, err)
@@ -25,10 +24,9 @@ exports.findUserById = async (userId) => {
 
 exports.findUserByEmail = async (email) => {
     try{
-        const sqlQuery = 'SELECT * FROM users WHERE email = $1'
-        const value = [email]
-        const res = await pool.query(sqlQuery, value);
-
+        const sqlQuery = 'SELECT id, username, email, password, role FROM users WHERE email = $1'
+        //const value = [email]
+        const res = await pool.query(sqlQuery, [email]);
         return res.rows[0];
     } catch (err){
         throw new Error('Failed to retrieve user\'s email ', err)
