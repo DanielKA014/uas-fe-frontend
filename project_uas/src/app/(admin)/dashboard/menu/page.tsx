@@ -1,47 +1,82 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 
 type MenuItemType = {
-  id: number;
-  name: string;
-  price: number | string;
-  ingredients: string;
+  item_id: number;
+  item_name: string;
+  dine_in_price: number;
+  online_price: number;
+  description: string;
   category: string;
-  image: string;
+  image_data_url: string;
+};
+
+const BASE_URL = "http://localhost:3001/api/foods";
+const ITEMS_PER_PAGE = 8;
+
+// Helper to get auth headers (assumes token is in localStorage)
+const getAuthHeaders = () => {
+  const token = localStorage.getItem("token");
+  return {
+    "Content-Type": "application/json",
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  };
 };
 
 export default function MenuPage() {
-  const [menus, setMenus] = useState<MenuItemType[]>([
-    {
-      id: 1,
-      name: "Ayam Goreng Kremes",
-      price: 25000,
-      ingredients: "Ayam, kremes, bawang, cabai",
-      category: "Main Dish",
-      image: "/images/makanan/ayam-goreng-kremes.jpeg",
-    },
-    {
-      id: 2,
-      name: "Es Teh Manis",
-      price: 8000,
-      ingredients: "Teh, gula, es batu",
-      category: "Beverage",
-      image: "/images/makanan/es-teh.png",
-    },
-  ]);
-
+  const [menus, setMenus] = useState<MenuItemType[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editingItem, setEditingItem] = useState<MenuItemType | null>(null);
 
   const [form, setForm] = useState({
-    name: "",
-    price: "",
-    ingredients: "",
-    category: "Main Dish",
-    image: "",
+    item_name: "",
+    dine_in_price: "",
+    online_price: "",
+    description: "",
+    category: "main-dish",
+    image_base64_url: "",
   });
+
+  // Fetch menus
+  const fetchMenus = async (page: number, append: boolean = false) => {
+    try {
+      append ? setLoadingMore(true) : setLoading(true);
+
+      const res = await fetch(`${BASE_URL}?page=${page}&limit=${ITEMS_PER_PAGE}`);
+      if (!res.ok) throw new Error(`Failed to fetch: ${res.status}`);
+
+      const data = await res.json();
+      const newMenus = data.result || [];
+
+      append ? setMenus((prev) => [...prev, ...newMenus]) : setMenus(newMenus);
+
+      setHasMore(newMenus.length === ITEMS_PER_PAGE);
+      setError(null);
+    } catch (err: any) {
+      console.error("Failed fetching menus", err);
+      setError("Failed to load menus. Please try again.");
+    } finally {
+      setLoading(false);
+      setLoadingMore(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchMenus(1, false);
+  }, []);
+
+  const loadNextPage = () => {
+    const nextPage = currentPage + 1;
+    setCurrentPage(nextPage);
+    fetchMenus(nextPage, true);
+  };
 
   // Image upload
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -49,93 +84,160 @@ export default function MenuPage() {
     if (!file) return;
     const reader = new FileReader();
     reader.onloadend = () => {
-      setForm((prev) => ({ ...prev, image: reader.result as string }));
+      setForm((prev) => ({ ...prev, image_base64_url: reader.result as string }));
     };
     reader.readAsDataURL(file);
   };
 
-  // Open modal for Add or Edit
+  // Modal handlers
   const openAddModal = () => {
     setEditingItem(null);
     setForm({
-      name: "",
-      price: "",
-      ingredients: "",
-      category: "Main Dish",
-      image: "",
+      item_name: "",
+      dine_in_price: "",
+      online_price: "",
+      description: "",
+      category: "main-dish",
+      image_base64_url: "",
     });
     setShowModal(true);
+    setError(null);
   };
 
   const openEditModal = (menu: MenuItemType) => {
     setEditingItem(menu);
     setForm({
-      name: menu.name,
-      price: String(menu.price),
-      ingredients: menu.ingredients,
+      item_name: menu.item_name,
+      // Convert numbers back to strings for the input fields
+      dine_in_price: String(menu.dine_in_price),
+      online_price: String(menu.online_price),
+      description: menu.description,
       category: menu.category,
-      image: menu.image,
+      image_base64_url: "", // Reset image field for edit, user must re-upload
     });
     setShowModal(true);
+    setError(null);
   };
 
-  const handleSave = () => {
-    if (!form.name || !form.price) {
-      alert("Please fill in the name and price!");
+  // Save Add / Edit
+  const handleSave = async () => {
+    // Client-side validation
+    if (!form.item_name.trim()) {
+      alert("Menu name is required!");
       return;
     }
 
-    if (editingItem) {
-      // Update existing
-      setMenus((prev) =>
-        prev.map((m) =>
-          m.id === editingItem.id
-            ? {
-                ...m,
-                name: form.name,
-                price: Number(form.price),
-                ingredients: form.ingredients,
-                category: form.category,
-                image: form.image || m.image,
-              }
-            : m
-        )
-      );
-    } else {
-      {
-        /* Add Menu */
+    const dineIn = parseFloat(form.dine_in_price);
+    const online = parseFloat(form.online_price);
+
+    if (isNaN(dineIn)) {
+      alert("Dine-in price must be a valid number!");
+      return;
+    }
+
+    if (isNaN(online)) {
+      alert("Online price must be a valid number!");
+      return;
+    }
+
+    // CONSTRUCTING THE REQUEST BODY (FIXED LOGIC)
+    const body: any = {
+      item_name: form.item_name.trim(),
+      category: form.category || "main-dish",
+      dine_in_price: dineIn,
+      online_price: online,
+      description: form.description || "",
+      // ADDITION: Always include image_base64_url, even if empty string for 'add'
+      // This satisfies the backend validator which might require the field.
+      image_base64_url: form.image_base64_url, 
+    };
+
+    // If it's an edit, we remove image_base64_url if it's empty, 
+    // so we don't unnecessarily update it to null/empty buffer if the user didn't upload a new one.
+    // NOTE: For 'add', we MUST send it.
+    if (editingItem && !body.image_base64_url) {
+        delete body.image_base64_url;
+    }
+
+    try {
+      const url = editingItem
+        ? `${BASE_URL}/${editingItem.item_id}/update`
+        : `${BASE_URL}/add`;
+      const method = editingItem ? "PUT" : "POST";
+
+      const res = await fetch(url, {
+        method,
+        headers: getAuthHeaders(),
+        body: JSON.stringify(body),
+      });
+
+      const text = await res.text();
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch {
+        data = { message: text };
       }
-      const newItem: MenuItemType = {
-        id: Date.now(),
-        name: form.name,
-        price: Number(form.price),
-        ingredients: form.ingredients,
-        category: form.category,
-        image: form.image || "/makanan/default.jpg",
-      };
-      setMenus((prev) => [newItem, ...prev]);
-    }
 
-    setShowModal(false);
-    setEditingItem(null);
-    setForm({
-      name: "",
-      price: "",
-      ingredients: "",
-      category: "Main Dish",
-      image: "",
-    });
-  };
+      if (!res.ok) {
+        // Logging the server response for easier debugging
+        console.error("Server validation/error response:", data);
+        
+        // Throw a better error message
+        if (data.errors && Array.isArray(data.errors)) {
+            const errorMessages = data.errors.map((e: any) => `${e.param}: ${e.msg}`).join('; ');
+            throw new Error(`Validation Failed: ${errorMessages}`);
+        }
 
-  const handleDelete = (id: number) => {
-    if (confirm("Are you sure you want to delete this menu?")) {
-      setMenus((prev) => prev.filter((m) => m.id !== id));
+        throw new Error(data.message || `Failed: ${res.status}`);
+      }
+
+      setShowModal(false);
+      setCurrentPage(1);
+      fetchMenus(1, false);
+      setError(null);
+    } catch (err: any) {
+      console.error("Save failed", err);
+      setError(err.message || "Save failed. Check authentication or try again.");
     }
   };
+
+  // Delete
+  const handleDelete = async (id: number) => {
+    if (!confirm("Are you sure you want to delete this menu?")) return;
+
+    try {
+      const res = await fetch(`${BASE_URL}/${id}/delete`, {
+        method: "DELETE",
+        headers: getAuthHeaders(),
+      });
+
+      const text = await res.text();
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch {
+        data = { message: text };
+      }
+
+      if (!res.ok) throw new Error(data.message || `Failed: ${res.status}`);
+
+      setCurrentPage(1);
+      fetchMenus(1, false);
+      setError(null);
+    } catch (err: any) {
+      console.error("Delete failed", err);
+      setError(err.message || "Delete failed. Check authentication or try again.");
+    }
+  };
+
+  if (loading) return <div>Loading menus...</div>;
 
   return (
     <div className="p-4">
       <h2 className="fw-bold mb-4">Menu Management</h2>
+
+      {error && <div className="alert alert-danger">{error}</div>}
 
       <button className="btn btn-success mb-3" onClick={openAddModal}>
         + Add Menu
@@ -143,19 +245,28 @@ export default function MenuPage() {
 
       <div className="row">
         {menus.map((menu) => (
-          <div key={menu.id} className="col-md-4 mb-4">
+          <div key={menu.item_id} className="col-lg-3 col-md-6 col-sm-12 mb-4">
             <div className="card shadow-sm">
               <Image
-                src={menu.image}
-                alt={menu.name}
+                src={menu.image_data_url || "/images/makanan/default.jpg"}
+                alt={menu.item_name}
                 width={400}
                 height={250}
                 className="card-img-top object-fit-cover"
               />
               <div className="card-body">
-                <h5 className="card-title fw-semibold">{menu.name}</h5>
-                <p className="mb-1">Price: Rp {menu.price}</p>
-                <p className="mb-1 text-muted small">{menu.ingredients}</p>
+                <h5 className="card-title fw-semibold">{menu.item_name}</h5>
+                <p className="mb-1">Dine-in: Rp {menu.dine_in_price}</p>
+                <p className="mb-1">Online: Rp {menu.online_price}</p>
+                <p className="mb-1 text-muted small" style={{ 
+                  overflow: 'hidden', 
+                  textOverflow: 'ellipsis', 
+                  display: '-webkit-box', 
+                  WebkitLineClamp: 2, 
+                  WebkitBoxOrient: 'vertical' 
+                  }} title={menu.description}>
+                    {menu.description}
+                  </p>
                 <p className="badge bg-secondary">{menu.category}</p>
                 <div className="d-flex justify-content-between mt-2">
                   <button
@@ -166,7 +277,7 @@ export default function MenuPage() {
                   </button>
                   <button
                     className="btn btn-danger btn-sm"
-                    onClick={() => handleDelete(menu.id)}
+                    onClick={() => handleDelete(menu.item_id)}
                   >
                     Delete
                   </button>
@@ -177,7 +288,18 @@ export default function MenuPage() {
         ))}
       </div>
 
-      {/* Modal */}
+      {hasMore && (
+        <div className="text-center mt-4">
+          <button
+            className="btn btn-outline-primary"
+            onClick={loadNextPage}
+            disabled={loadingMore}
+          >
+            {loadingMore ? "Loading..." : "Next Page"}
+          </button>
+        </div>
+      )}
+
       {showModal && (
         <div
           className="position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-50 d-flex align-items-center justify-content-center"
@@ -188,21 +310,20 @@ export default function MenuPage() {
             style={{
               width: "450px",
               maxWidth: "90%",
-              maxHeight: "90vh", // prevents overflowing viewport
+              maxHeight: "90vh",
             }}
           >
             <div
               className="p-4 overflow-auto"
               style={{
                 flex: 1,
-                minHeight: 0, // ensures overflow works properly
+                minHeight: 0,
               }}
             >
               <h5 className="mb-3">
                 {editingItem ? "Edit Menu" : "Add New Menu"}
               </h5>
 
-              {/* Image upload area */}
               <div
                 className="border border-2 border-secondary rounded mb-3 d-flex flex-column align-items-center justify-content-center"
                 style={{
@@ -211,14 +332,12 @@ export default function MenuPage() {
                   cursor: "pointer",
                 }}
                 onClick={() =>
-                  (
-                    document.getElementById("imageUpload") as HTMLInputElement
-                  )?.click()
+                  (document.getElementById("imageUpload") as HTMLInputElement)?.click()
                 }
               >
-                {form.image ? (
+                {form.image_base64_url ? (
                   <Image
-                    src={form.image}
+                    src={form.image_base64_url}
                     alt="Preview"
                     width={300}
                     height={200}
@@ -241,42 +360,50 @@ export default function MenuPage() {
                 />
               </div>
 
-              {/* Inputs */}
               <div className="mb-2">
                 <label className="form-label fw-semibold">Name</label>
                 <input
                   type="text"
                   className="form-control"
-                  value={form.name}
+                  value={form.item_name}
                   onChange={(e) =>
-                    setForm((prev) => ({ ...prev, name: e.target.value }))
+                    setForm((prev) => ({ ...prev, item_name: e.target.value }))
                   }
                 />
               </div>
 
               <div className="mb-2">
-                <label className="form-label fw-semibold">Price</label>
+                <label className="form-label fw-semibold">Dine-in Price</label>
                 <input
                   type="number"
                   className="form-control"
-                  value={form.price}
+                  value={form.dine_in_price}
                   onChange={(e) =>
-                    setForm((prev) => ({ ...prev, price: e.target.value }))
+                    setForm((prev) => ({ ...prev, dine_in_price: e.target.value }))
                   }
                 />
               </div>
 
               <div className="mb-2">
-                <label className="form-label fw-semibold">Ingredients</label>
+                <label className="form-label fw-semibold">Online Price</label>
+                <input
+                  type="number"
+                  className="form-control"
+                  value={form.online_price}
+                  onChange={(e) =>
+                    setForm((prev) => ({ ...prev, online_price: e.target.value }))
+                  }
+                />
+              </div>
+
+              <div className="mb-2">
+                <label className="form-label fw-semibold">Description</label>
                 <textarea
                   className="form-control"
                   rows={3}
-                  value={form.ingredients}
+                  value={form.description}
                   onChange={(e) =>
-                    setForm((prev) => ({
-                      ...prev,
-                      ingredients: e.target.value,
-                    }))
+                    setForm((prev) => ({ ...prev, description: e.target.value }))
                   }
                 />
               </div>
@@ -290,15 +417,14 @@ export default function MenuPage() {
                     setForm((prev) => ({ ...prev, category: e.target.value }))
                   }
                 >
-                  <option>Main Dish</option>
-                  <option>Beverage</option>
-                  <option>Vegetables</option>
-                  <option>Add Ons</option>
+                  <option value="main-dish">Main Dish</option>
+                  <option value="beverages">Beverages</option>
+                  <option value="vegetables">Vegetables</option>
+                  <option value="add-ons">Add Ons</option>
                 </select>
               </div>
             </div>
 
-            {/* Sticky footer for buttons */}
             <div
               className="p-3 border-top bg-white d-flex justify-content-end gap-2"
               style={{ position: "sticky", bottom: 0 }}

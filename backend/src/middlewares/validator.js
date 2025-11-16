@@ -52,8 +52,8 @@ exports.foodValidator = [
 
     body('category')
         .optional()
-        .isIn(['main-dish', 'drink', 'add-on'])
-        .withMessage('Category must be main-dish, drink, or add-on!'),
+        .isIn(['main-dish', 'beverages', 'vegetables', 'add-ons'])
+        .withMessage('Category must be main-dish, beverages, vegetables, or add-ons!'),
 
     body('online_price')
         .isDecimal().withMessage('Online price must be a valid decimal number')
@@ -117,7 +117,7 @@ exports.updateFoodValidator = [
     body('category')
         .optional()
         .isIn(['main-dish', 'beverages', 'vegetables', 'add-on'])
-        .withMessage('Category must be main-dish, drink, or add-on!'),
+        .withMessage('Category must be main-dish, beverages, vegetables, or add-ons!'),
 
     body('online_price')
         .optional()

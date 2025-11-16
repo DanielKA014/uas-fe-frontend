@@ -97,7 +97,7 @@ exports.addFood = async (req, res, next) => {
             // console.log('dasfas', matched)
             if (matched) {
                 imageFormat = matched[1]; 
-                console.log(image_base64_url.split()[1])
+                console.log(image_base64_url.split(',')[1])
 
                 imageBuffer = Buffer.from(image_base64_url.split(',')[1], 'base64');
             } else {
