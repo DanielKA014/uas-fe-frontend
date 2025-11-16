@@ -10,6 +10,7 @@ export default function ReviewPage() {
   const [showModal, setShowModal] = useState(false);
   const [newRating, setNewRating] = useState(0);
   const [newComment, setNewComment] = useState("");
+  // const [username, setUsername] = useState<string | null>(null);
   const [hover, setHover] = useState(0);
   const [selectedBadges, setSelectedBadges] = useState<string[]>([]);
 
@@ -63,10 +64,31 @@ export default function ReviewPage() {
     },
   ];
 
+  const getUserById = async (userId: number) => {
+    try{
+      const res = await fetch(`http://localhost:3001/api/users/${userId}`);
+      console.log(res);
+      if (!res.ok){
+        throw new Error(`Failed to get current user ${res.status}`);
+      } 
+      
+      const user = await res.json();
+      return user.username;
+    } catch (err: any){
+      setError(err.message || 'Failed to fetch current user session');
+    }
+  }
+
   // transform backend review row to frontend shape
-  const mapServerToUI = (row: any): ReviewUI => {
+  const mapServerToUI = async (row: any): Promise<ReviewUI> => {
+    let username = "";
+    if (row.user_id){
+      const user = await getUserById(row.user_id);
+      console.log(user);
+      username = user
+    }
     return {
-      name: row.user_id ? `User ${row.user_id}` : "Anonymous",
+      name: row.user_id ? `${username}` : "Anonymous",
       rating: row.stars ?? 0,
       text: row.comment ?? "",
       badges: row.overview ? [row.overview] : [],
@@ -81,7 +103,8 @@ export default function ReviewPage() {
       if (!res.ok) throw new Error(`Failed to fetch: ${res.status}`);
       const data = await res.json();
       if (Array.isArray(data)) {
-        setReviews(data.map(mapServerToUI));
+        const reviews = await Promise.all(data.map(mapServerToUI))
+        setReviews(reviews);
       } else {
         setError('Unexpected response from server');
       }
@@ -128,7 +151,8 @@ export default function ReviewPage() {
       }
 
       const created = await res.json();
-      setReviews(prev => [mapServerToUI(created), ...prev]);
+      const reviews = await mapServerToUI(created);
+      setReviews(prev => [reviews, ...prev]);
       setNewRating(0);
       setNewComment('');
       setSelectedBadges([]);

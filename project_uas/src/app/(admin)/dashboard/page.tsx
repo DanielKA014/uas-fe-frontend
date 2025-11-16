@@ -5,24 +5,24 @@ import { FaStar, FaStarHalfAlt, FaRegStar, FaTimes } from "react-icons/fa";
 
 // --- Tipe Data Frontend ---
 type MenuItemType = {
-  item_id: number;
-  item_name: string;
-  image_data_url: string;
-  category: string;
-  rating: number; 
-  reviews: number; 
+  item_id: number;
+  item_name: string;
+  image_data_url: string;
+  category: string;
+  rating: number; 
+  reviews: number; 
 };
 
 type FoodReview = {
-  comment_id: number;
-  stars: number;
-  comment: string;
-  // Tambahkan user_id atau username jika tersedia di skema DB
+  comment_id: number;
+  stars: number;
+  comment: string;
+  // Tambahkan user_id atau username jika tersedia di skema DB
 };
 
 type RestaurantRating = {
-    average: number;
-    totalReviews: number;
+  average: number;
+  totalReviews: number;
 }
 
 // Tambahkan deklarasi Buffer Node.js secara eksplisit jika environment Next.js client component belum menginjeksikannya
@@ -37,7 +37,6 @@ export default function AdminHome() {
     const [menuItems, setMenuItems] = useState<MenuItemType[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-
     const [restaurantRating, setRestaurantRating] = useState<RestaurantRating>({ average: 0, totalReviews: 0 }); 
 
     const [showReviewModal, setShowReviewModal] = useState(false);
@@ -45,6 +44,32 @@ export default function AdminHome() {
     const [currentReviews, setCurrentReviews] = useState<FoodReview[]>([]);
     const [reviewLoading, setReviewLoading] = useState(false);
     const [reviewStarFilter, setReviewStarFilter] = useState<number | 'all'>('all');
+
+    // const [authStatus, setAuthStatus] = useState<"loading" | "authorized" | "unauthorized" | "forbidden">("loading");
+
+    // useEffect(() => {
+    //     const checkAuth = async () => {
+    //         try {
+    //             const res = await fetch("http://localhost:3001/api/users/current");
+
+    //             if (res.status === 401) {
+    //                 setAuthStatus("unauthorized");
+    //                 return;
+    //             }
+    //             if (res.status === 403) {
+    //                 setAuthStatus("forbidden");
+    //                 return;
+    //             }
+
+    //             setAuthStatus("authorized");
+    //         } catch (err) {
+    //             setError("Authorization failed!");
+    //             setAuthStatus("unauthorized");
+    //         }
+    //     };
+
+    //     checkAuth();
+    // }, []);
 
     // --- 1. Fungsi Fetch Ulasan Menu Tertentu (Unchanged) ---
     const fetchMenuReviews = useCallback(async (itemId: number) => {
@@ -123,41 +148,53 @@ export default function AdminHome() {
     // ... (sisa fungsi handleOpenReviewModal, handleCloseReviewModal, renderStars) ...
     
     const sorted =
-    filter === "highestRated"
-      ? [...menuItems].sort((a, b) => b.rating - a.rating)
-      : [...menuItems].sort((a, b) => b.reviews - a.reviews);
+    filter === "highestRated"
+      ? [...menuItems].sort((a, b) => b.rating - a.rating)
+      : [...menuItems].sort((a, b) => b.reviews - a.reviews);
 
-    const handleOpenReviewModal = (item: MenuItemType) => {
-        setSelectedMenuItem(item);
-        setShowReviewModal(true);
-        fetchMenuReviews(item.item_id); 
-    };
+    const handleOpenReviewModal = (item: MenuItemType) => {
+        setSelectedMenuItem(item);
+        setShowReviewModal(true);
+        fetchMenuReviews(item.item_id); 
+    };
 
-    const handleCloseReviewModal = () => {
-        setShowReviewModal(false);
-        setSelectedMenuItem(null);
-        setCurrentReviews([]);
-        setReviewStarFilter('all');
-    };
+    const handleCloseReviewModal = () => {
+        setShowReviewModal(false);
+        setSelectedMenuItem(null);
+        setCurrentReviews([]);
+        setReviewStarFilter('all');
+    };
 
-    const renderStars = (rating: number) => {
-        const validRating = (rating && isFinite(rating)) ? rating : 0; 
-        const stars = [];
-        for (let i = 1; i <= 5; i++) {
-            if (validRating >= i) stars.push(<FaStar key={i} color="#facc15" />);
-            else if (validRating >= i - 0.5) stars.push(<FaStarHalfAlt key={i} color="#facc15" />);
-            else stars.push(<FaRegStar key={i} color="#facc15" />);
-        }
-        return stars;
-    };
-  
-    const reviewsToDisplay = currentReviews.filter(
-        (review) => reviewStarFilter === 'all' || review.stars === reviewStarFilter
-    );
-
+    const renderStars = (rating: number) => {
+        const validRating = (rating && isFinite(rating)) ? rating : 0; 
+        const stars = [];
+        for (let i = 1; i <= 5; i++) {
+            if (validRating >= i) stars.push(<FaStar key={i} color="#facc15" />);
+            else if (validRating >= i - 0.5) stars.push(<FaStarHalfAlt key={i} color="#facc15" />);
+            else stars.push(<FaRegStar key={i} color="#facc15" />);
+        }
+        return stars;
+    };
+  
+    const reviewsToDisplay = currentReviews.filter(
+        (review) => reviewStarFilter === 'all' || review.stars === reviewStarFilter
+    );
 
     if (loading) return <div style={{ padding: 20, textAlign: 'center' }}>Loading menu data...</div>;
     if (error) return <div style={{ padding: 20, textAlign: 'center', color: 'red' }}>Error: {error}</div>;
+
+
+    // if (authStatus === "unauthorized") {
+    //     return (
+    //         <p>Unauthorized</p>
+    //     );
+    // }
+
+    // if (authStatus === "forbidden") {
+    //     return (
+    //         <p>Forbidden</p>
+    //     );
+    // }
 
     return (
         <div style={{ padding: '20px', background: '#f8f8f8', minHeight: '100vh' }}>

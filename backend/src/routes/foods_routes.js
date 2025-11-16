@@ -8,7 +8,7 @@
     router.get('/', foods.getFoods)
     router.get('/:id', foods.getFoodById)
     router.get('/:id/reviews', reviews.getFoodReviews)
-    router.post('/:id/reviews/add', optionalLogin, foodReviewValidator, reviews.addFoodReview)
+    router.post('/:id/reviews/add', foodReviewValidator, reviews.addFoodReview)
     router.delete('/:id/delete', passportAuth, isTokenBlacklisted, checkAdminRole, foods.deleteFoodById)
     router.post('/add', passportAuth, isTokenBlacklisted, checkAdminRole, foodValidator, foods.addFood)
     router.put('/:id/update', passportAuth, isTokenBlacklisted, checkAdminRole, updateFoodValidator, foods.updateFoodById)

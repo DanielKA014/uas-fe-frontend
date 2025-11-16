@@ -12,7 +12,7 @@ module.exports = (passport) => {
       async (payload, done) => {
         try {
           // console.log(payload)
-          const user = await usersModel.findUserById(payload.id);
+          const user = await usersModel.findUserPayloadById(payload.id);
           // console.log('user at passport', user)
           return done(null, user || false);
         } catch (err) {
