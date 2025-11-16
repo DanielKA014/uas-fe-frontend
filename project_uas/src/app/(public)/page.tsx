@@ -1,12 +1,18 @@
 'use client';
 import Image from "next/image";
 import { Button, Container, Row, Col, Card } from "react-bootstrap";
+import { useRouter } from "next/navigation";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { FaDrumstickBite, FaGlassWhiskey, FaCube } from "react-icons/fa";
 import { GiTomato } from "react-icons/gi";
 import "./menu/page.css";
 
 export default function Home() {
+  const router = useRouter();
+
+  const handleCategoryClick = (category: string) => {
+    router.push(`/menu?category=${encodeURIComponent(category)}`);
+  };
   return (
     <main id="home">
       {/* Hero section */}
@@ -95,13 +101,12 @@ export default function Home() {
                   <Card.Text className="text-muted">
                     Savor our signature grilled chicken, marinated to perfection and served with delicious sides.
                   </Card.Text>
-                  <Button variant="link" className="text-danger text-decoration-none">
-                    <a
-                      href={"/menu?category=${encodeURIComponent('Main Dish')}"}
-                      className="btn btn-outline-danger rounded-pill"
-                    >
-                      Explore Menu
-                    </a>
+                  <Button 
+                    variant="outline-danger" 
+                    className="rounded-pill"
+                    onClick={() => handleCategoryClick('Main Dish')}
+                  >
+                    Explore Menu
                   </Button>
                 </Card.Body>
               </Card>
@@ -116,13 +121,12 @@ export default function Home() {
                     In the new era of technology we look to the future with
                     certainty and pride for our life.
                   </Card.Text>
-                  <Button variant="link" className="text-danger text-decoration-none">
-                    <a
-                      href="/menu?category=${encodeURIComponent('Beverages')}"
-                      className="btn btn-outline-danger rounded-pill"
-                    >
-                      Explore Menu
-                    </a>
+                  <Button 
+                    variant="outline-danger" 
+                    className="rounded-pill"
+                    onClick={() => handleCategoryClick('Beverages')}
+                  >
+                    Explore Menu
                   </Button>
                 </Card.Body>
               </Card>
@@ -137,13 +141,12 @@ export default function Home() {
                     In the new era of technology we look to the future with
                     certainty and pride for our life.
                   </Card.Text>
-                  <Button variant="link" className="text-danger text-decoration-none">
-                    <a
-                      href="/menu?category=${encodeURIComponent('Vegetables')}"
-                      className="btn btn-outline-danger rounded-pill"
-                    >
-                      Explore Menu
-                    </a>
+                  <Button 
+                    variant="outline-danger" 
+                    className="rounded-pill"
+                    onClick={() => handleCategoryClick('Vegetables')}
+                  >
+                    Explore Menu
                   </Button>
                 </Card.Body>
               </Card>
@@ -158,13 +161,12 @@ export default function Home() {
                     In the new era of technology we look to the future with
                     certainty and pride for our life.
                   </Card.Text>
-                  <Button variant="link" className="text-danger text-decoration-none">
-                    <a
-                      href={"/menu?category=${encodeURIComponent('Add-on')}"}
-                      className="btn btn-outline-danger rounded-pill"
-                    >
-                      Explore Menu
-                    </a>
+                  <Button 
+                    variant="outline-danger" 
+                    className="rounded-pill"
+                    onClick={() => handleCategoryClick('Add-on')}
+                  >
+                    Explore Menu
                   </Button>
                 </Card.Body>
               </Card>
