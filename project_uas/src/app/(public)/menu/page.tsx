@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { FaStar } from "react-icons/fa";
 import { Modal, Button } from "react-bootstrap";
@@ -24,6 +25,9 @@ interface Review {
 }
 
 export default function MenuItem() {
+  const searchParams = useSearchParams();
+  const categoryParam = searchParams.get('category');
+  
   const [filter, setFilter] = useState<String>("All");
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
@@ -78,6 +82,14 @@ export default function MenuItem() {
 
     fetchFoods();
   }, []);
+
+  // Set filter based on query parameter
+  useEffect(() => {
+    if (categoryParam) {
+      setFilter(categoryParam);
+      setCurrentPage(1);
+    }
+  }, [categoryParam]);
 
   // Fetch reviews when modal opens
   const fetchReviews = async (foodId: number) => {
