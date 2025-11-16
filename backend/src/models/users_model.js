@@ -11,7 +11,19 @@ exports.findAll = async () => {
     }
 }
 
-exports.findUserById = async (userId) => {
+// return non credentials
+exports.findOne = async () => {
+    try{
+        const sqlQuery = 'SELECT id, username, role, created_at, updated_at FROM users'
+        const res = await pool.query(sqlQuery);
+
+        return res.rows[0];
+    } catch (err) {
+        throw new Error('Failed to fetch user ', err);
+    }
+}
+
+exports.findUserPayloadById = async (userId) => {
     try{
         const sqlQuery = 'SELECT id, username, email, password, role, created_at, updated_at FROM users WHERE id = $1'
         //const value = [userId]

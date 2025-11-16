@@ -95,7 +95,7 @@ export default function MenuItem() {
   const fetchReviews = async (foodId: number) => {
     try {
       setLoadingReviews(true);
-      const response = await fetch(`http://localhost:3001/api/food-reviews/${foodId}`);
+      const response = await fetch(`http://localhost:3001/api/foods/${foodId}/reviews`);
       
       if (!response.ok) {
         throw new Error('Failed to fetch reviews');
@@ -132,7 +132,7 @@ export default function MenuItem() {
     }
 
     try {
-      const response = await fetch("http://localhost:3001/api/food-reviews/", {
+      const response = await fetch("http://localhost:3001/api/foods/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -145,6 +145,7 @@ export default function MenuItem() {
       });
 
       if (!response.ok) {
+        console.log((response))
         throw new Error("Failed to add review");
       }
 

@@ -2,7 +2,7 @@ const addressModels = require('../models/address_model.js');
 const { validationResult } = require('express-validator');
 
 exports.getAddresses = async (req, res, next) => {
-    console.log('req user incase of login', req.user)
+    // console.log('req user incase of login', req.user)
     try{
         const addresses = await addressModels.findAll();
         if (!addresses){

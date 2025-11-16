@@ -87,6 +87,17 @@ exports.getAllUsers = async (req, res, next) =>{
     }  
 }
 
+exports.getUserInfoById = async (req, res, next) => {
+    try{
+        const userId = req.params.id
+        const user = await usersModel.findOne(userId);
+        
+        if (user) return res.status(200).json(user);
+    } catch (err){
+        return next(err);
+    }
+}
+
 exports.getCurrentUser = async (req, res, next) => {
     try{
         const user = req.user
