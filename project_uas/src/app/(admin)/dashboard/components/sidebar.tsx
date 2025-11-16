@@ -1,10 +1,28 @@
 'use client';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    try {
+      const res = await fetch('http://localhost:3001/api/auth/logout', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+      if (res.ok) {
+        localStorage.removeItem('token');
+        router.push('/login');
+      }
+    } catch (err) {
+      console.error('Logout failed:', err);
+    }
+  };
 
   const navLinks = [
     { href: '/dashboard', label: 'Dashboard' },
@@ -45,7 +63,15 @@ export default function Sidebar() {
             })}
           </nav>
 
-          <p className="text-muted text-center small mt-3">© 2025 Ayam Bakar Admin</p>
+          <div>
+            <button
+              onClick={handleLogout}
+              className="btn btn-danger w-100 mb-3"
+            >
+              Logout
+            </button>
+            <p className="text-muted text-center small mt-3">© 2025 Ayam Bakar Admin</p>
+          </div>
         </div>
       </div>
 
@@ -87,9 +113,17 @@ export default function Sidebar() {
         </nav>
 
         {/* Footer */}
-        <p className="text-muted text-center small p-3 mb-2">
-          © {new Date().getFullYear()} Ayam Bakar Admin
-        </p>
+        <div className="p-3">
+          <button
+            onClick={handleLogout}
+            className="btn btn-danger w-100 mb-3"
+          >
+            Logout
+          </button>
+          <p className="text-muted text-center small mb-0">
+            © {new Date().getFullYear()} Ayam Bakar Admin
+          </p>
+        </div>
       </aside>
 
       {/* Mobile Toggle */}
