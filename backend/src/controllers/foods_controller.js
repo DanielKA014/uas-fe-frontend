@@ -8,7 +8,7 @@ exports.getFoods = async (req, res, next) =>{
         const offset = (page - 1) * limit;
 
         const dbFoods = await foodsModel.findAll(limit, offset);
-        if(!dbFoods) return res.status(500).send("Error on fetching foods data.");
+        if(!dbFoods) return res.status(500).json({message: "Error on fetching foods data."});
 
         let result = []
         dbFoods.forEach(food => {
@@ -58,7 +58,7 @@ exports.getFoodById = async (req, res, next) => {
                 image_data_url: `data:image/${food.image_format};base64,${base64Str}`
             });
         } else{
-            return res.status(404).send("Food item doesn't exists!")
+            return res.status(404).json({message: "Food item doesn't exists!"})
         }
     } catch (err) {
         return next(err)
@@ -101,7 +101,7 @@ exports.addFood = async (req, res, next) => {
 
                 imageBuffer = Buffer.from(image_base64_url.split(',')[1], 'base64');
             } else {
-                return res.status(400).send("Invalid image data!")
+                return res.status(400).json({message: "Invalid image data!"})
             }
         }
 
@@ -133,7 +133,7 @@ exports.updateFoodById = async (req, res, next) => {
 
         const exists = await foodsModel.findOne(foodId);
         if (!exists) {
-            return res.status(404).send("Food item doesn't exists!");
+            return res.status(404).json({message: "Food item doesn't exists!"});
         }
 
         if (Object.keys(req.body).length === 0) {
@@ -163,7 +163,7 @@ exports.updateFoodById = async (req, res, next) => {
                 updates.image_format = matched[1]; 
                 updates.image_bytes = Buffer.from(image_base64_url.split(',')[1], 'base64');
             } else {
-                return res.status(400).send("Invalid image data!");
+                return res.status(400).json({message: "Invalid image data!"});
             }
         }
 
@@ -195,7 +195,7 @@ exports.deleteFoodById = async (req, res, next) => {
         const exists = await foodsModel.findOne(foodId);;
 
         if (!exists){
-            return res.status(404).send("Food item doesn't exists!")
+            return res.status(404).json({message: "Food item doesn't exists!"})
         }
 
         const food =  await foodsModel.deleteFood(foodId);

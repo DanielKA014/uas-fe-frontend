@@ -1,13 +1,15 @@
 const pool = require('../config/db.js')
 
-exports.findAll = async (limit, offset) => {
+exports.findAll = async (foodId, limit, offset) => {
     try{
         const sqlQuery = `SELECT * FROM food_reviews
+                            WHERE food_id = $1
                             ORDER BY comment_id
-                            LIMIT $1 OFFSET $2`
-        const res = await pool.query(sqlQuery, [limit, offset]);
+                            LIMIT $2 OFFSET $3`
+        const res = await pool.query(sqlQuery, [foodId, limit, offset]);
         return res.rows;
     } catch (err) {
+        console.log(err)
         throw new Error('Failed to fetch food items', err)
     }
 }

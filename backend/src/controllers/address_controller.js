@@ -6,7 +6,7 @@ exports.getAddresses = async (req, res, next) => {
     try{
         const addresses = await addressModels.findAll();
         if (!addresses){
-            return res.status(500).send("Failed to find addresses!")
+            return res.status(500).json({message: "Failed to find addresses!"})
         } else{
             return res.status(200).json(addresses);
         }
@@ -54,7 +54,7 @@ exports.updateAddressById = async (req, res, next) => {
 
         const exists = await addressModels.findOne(addressId);
         if (!exists) {
-            return res.status(404).send("Address item doesn't exists!");
+            return res.status(404).json({message: "Address item doesn't exists!"});
         }
 
         if (Object.keys(req.body).length === 0) {
@@ -96,7 +96,7 @@ exports.deleteAddressById = async (req, res, next) => {
 
         const exists = await addressModels.findOne(addressId);
         if (!exists){
-            return res.status(404).send("Address item doesn't exists!")
+            return res.status(404).json({message: "Address item doesn't exists!"})
         }
 
         const deletedAddress = await addressModels.deleteAddressById(addressId);
@@ -106,7 +106,7 @@ exports.deleteAddressById = async (req, res, next) => {
                 deletedAddress
             });
         } else {
-            return res.status(500).send("Failed to delete address.");
+            return res.status(500).json({message: "Failed to delete address."});
         }
     } catch (err) {
         return next(err)

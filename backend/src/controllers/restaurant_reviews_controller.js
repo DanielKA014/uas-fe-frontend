@@ -9,7 +9,7 @@ exports.getRestaurantReviews = async (req, res, next) =>{
 
         const reviews = await reviewModel.findAll(limit, offset);
         if (!reviews){
-            return res.status(500).send("Failed to fetch food reviews")
+            return res.status(500).json({message: "Failed to fetch food reviews"})
         } else{
             return res.status(200).json(reviews)
         }
@@ -41,7 +41,7 @@ exports.addRestaurantReview = async (req, res, next) => {
 
         const review = await reviewModel.addReview(stars, comment, tempOverview, userId);
         if (!review){
-            return res.status(500).send("Failed to add food review!");;
+            return res.status(500).json({message: "Failed to add food review!"});
         } else{
             return res.status(201).json({message: "Food review added successfully.", review})
         }

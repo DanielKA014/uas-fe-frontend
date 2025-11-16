@@ -125,14 +125,14 @@ export default function MenuItem() {
     setNewComment("");
   };
 
-  const handleAddReview = async () => {
+  const handleAddReview = async (foodId: number) => {
     if (!selectedItem || !newComment.trim() || newRating === 0) {
       alert("Please provide both rating and comment");
       return;
     }
 
     try {
-      const response = await fetch("http://localhost:3001/api/foods/", {
+      const response = await fetch(`http://localhost:3001/api/foods/${foodId}/reviews/add`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -155,10 +155,10 @@ export default function MenuItem() {
       setReviews(prev => [newReview, ...prev]);
       setNewComment("");
       setNewRating(0);
-      alert("Review added successfully!");
+      await fetchReviews(foodId);
     } catch (error) {
       console.error("Error adding review:", error);
-      alert("Failed to add review");
+      alert("An error occured while adding food review!");
     }
   };
 
@@ -400,7 +400,7 @@ export default function MenuItem() {
                             />
                             <Button 
                               variant="danger" 
-                              onClick={handleAddReview}
+                              onClick={() => handleAddReview(selectedItem.id)}
                               disabled={!newComment.trim() || newRating === 0}
                             >
                               Send
