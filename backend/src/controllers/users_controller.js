@@ -101,7 +101,7 @@ exports.getUserInfoById = async (req, res, next) => {
 exports.getCurrentUser = async (req, res, next) => {
     try{
         const user = req.user
-        if (!user) return res.status(401).send("You\'re not logged in!");
+        if (!user) return res.status(401).json({message: "You\'re not logged in!"});
         else return res.status(200).json(user);
     } catch (err){
         return next(err);
