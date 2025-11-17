@@ -20,19 +20,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     <html lang="en">
       <body className="min-h-screen m-0 p-0 bg-gray-50" style={{ fontFamily: "inherit" }}>
         <div style={{ display: "flex", minHeight: "100vh" }}>
-          <Sidebar />
-          <main 
-            style={{ 
-                flex: 1, 
-                marginLeft: "170px",
-                transition: "margin-left 0.3s ease"
-            }}
-            className="p-4"
-          >
             <AdminGuard>
               {children}
             </AdminGuard>
-          </main>
         </div>
       </body>
     </html>

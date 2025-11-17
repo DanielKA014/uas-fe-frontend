@@ -2,6 +2,7 @@
 import Image from "next/image";
 import { useState, useEffect, useCallback } from "react"; 
 import { FaStar, FaStarHalfAlt, FaRegStar, FaTimes } from "react-icons/fa";
+import Sidebar from "./components/sidebar";
 
 // --- Tipe Data Frontend ---
 type MenuItemType = {
@@ -182,223 +183,218 @@ export default function AdminHome() {
 
     if (loading) return <div style={{ padding: 20, textAlign: 'center' }}>Loading menu data...</div>;
     if (error) return <div style={{ padding: 20, textAlign: 'center', color: 'red' }}>Error: {error}</div>;
-
-
-    // if (authStatus === "unauthorized") {
-    //     return (
-    //         <p>Unauthorized</p>
-    //     );
-    // }
-
-    // if (authStatus === "forbidden") {
-    //     return (
-    //         <p>Forbidden</p>
-    //     );
-    // }
-
+    
     return (
-        <div style={{ padding: '20px', background: '#f8f8f8', minHeight: '100vh' }}>
-            {/* ... (Restaurant Overview) ... */}
-            <div
-                style={{
-                    background: "#fff",
-                    padding: 24,
-                    borderRadius: 8,
-                    boxShadow: "0 6px 20px rgba(0,0,0,0.06)",
-                    marginBottom: 20,
-                }}
-            >
-                <h2 style={{ margin: 0 }}>Restaurant Overview</h2>
+        <><Sidebar /><main
+
+            style={{
+                flex: 1,
+                marginLeft: "170px",
+                transition: "margin-left 0.3s ease"
+            }}
+            className="p-4"
+        >
+            <div style={{ padding: '20px', background: '#f8f8f8', minHeight: '100vh' }}>
+                {/* ... (Restaurant Overview) ... */}
+                <div
+                    style={{
+                        background: "#fff",
+                        padding: 24,
+                        borderRadius: 8,
+                        boxShadow: "0 6px 20px rgba(0,0,0,0.06)",
+                        marginBottom: 20,
+                    }}
+                >
+                    <h2 style={{ margin: 0 }}>Restaurant Overview</h2>
+                    <div
+                        style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                            marginTop: 12,
+                        }}
+                    >
+                        <div>
+                            <div style={{ fontSize: 40, color: "#d97706", fontWeight: 700 }}>
+                                {restaurantRating.average.toFixed(1)}
+                            </div>
+                            <div style={{ display: "flex", gap: 2 }}>{renderStars(restaurantRating.average)}</div>
+                            <div style={{ color: "#6b7280", marginTop: 6 }}>
+                                {restaurantRating.totalReviews} reviews
+                            </div>
+                        </div>
+                        <div>
+                            <Image
+                                src="/images/makanan/ayam-bakar.jpeg"
+                                alt="overview"
+                                width={160}
+                                height={120}
+                                style={{ borderRadius: 8, objectFit: "cover" }} />
+                        </div>
+                    </div>
+                </div>
+
+                {/* Filter */}
                 <div
                     style={{
                         display: "flex",
                         justifyContent: "space-between",
                         alignItems: "center",
-                        marginTop: 12,
+                        marginBottom: 12,
                     }}
                 >
-                    <div>
-                        <div style={{ fontSize: 40, color: "#d97706", fontWeight: 700 }}>
-                            {restaurantRating.average.toFixed(1)} 
-                        </div>
-                        <div style={{ display: "flex", gap: 2 }}>{renderStars(restaurantRating.average)}</div>
-                        <div style={{ color: "#6b7280", marginTop: 6 }}>
-                            {restaurantRating.totalReviews} reviews 
-                        </div>
-                    </div>
-                    <div>
-                        <Image
-                            src="/images/makanan/ayam-bakar.jpeg"
-                            alt="overview"
-                            width={160}
-                            height={120}
-                            style={{ borderRadius: 8, objectFit: "cover" }}
-                        />
-                    </div>
+                    <h3 style={{ margin: 0 }}>Menu Ratings ({menuItems.length} items)</h3>
+                    <select
+                        value={filter}
+                        onChange={(e) => setFilter(e.target.value)}
+                        style={{ padding: 8, borderRadius: 6, border: '1px solid #ccc' }}
+                    >
+                        <option value="mostReviews">Most Reviews</option>
+                        <option value="highestRated">Highest Rated</option>
+                    </select>
                 </div>
-            </div>
-            
-            {/* Filter */}
-            <div
-                style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    marginBottom: 12,
-                }}
-            >
-                <h3 style={{ margin: 0 }}>Menu Ratings ({menuItems.length} items)</h3>
-                <select
-                    value={filter}
-                    onChange={(e) => setFilter(e.target.value)}
-                    style={{ padding: 8, borderRadius: 6, border: '1px solid #ccc' }}
-                >
-                    <option value="mostReviews">Most Reviews</option>
-                    <option value="highestRated">Highest Rated</option>
-                </select>
-            </div>
 
-            {/* Cards */}
-            <div
-                style={{
-                    display: "grid",
-                    gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
-                    gap: 16,
-                }}
-            >
-                {sorted.map((item) => (
+                {/* Cards */}
+                <div
+                    style={{
+                        display: "grid",
+                        gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
+                        gap: 16,
+                    }}
+                >
+                    {sorted.map((item) => (
+                        <div
+                            key={item.item_id}
+                            onClick={() => handleOpenReviewModal(item)}
+                            style={{
+                                background: "#fff",
+                                padding: 14,
+                                borderRadius: 8,
+                                display: "flex",
+                                gap: 12,
+                                alignItems: "center",
+                                boxShadow: "0 6px 18px rgba(0,0,0,0.04)",
+                                cursor: "pointer",
+                                transition: "box-shadow 0.2s",
+                            }}
+                            onMouseEnter={(e) => e.currentTarget.style.boxShadow = "0 8px 25px rgba(0,0,0,0.1)"}
+                            onMouseLeave={(e) => e.currentTarget.style.boxShadow = "0 6px 18px rgba(0,0,0,0.04)"}
+                        >
+                            <div
+                                style={{
+                                    width: 90,
+                                    height: 90,
+                                    borderRadius: 8,
+                                    overflow: "hidden",
+                                }}
+                            >
+                                <Image
+                                    src={item.image_data_url}
+                                    alt={item.item_name}
+                                    width={90}
+                                    height={90}
+                                    style={{ objectFit: "cover" }} />
+                            </div>
+                            <div>
+                                <div style={{ fontWeight: 700 }}>{item.item_name}</div>
+                                <div style={{ display: "flex", alignItems: "center", gap: 4, marginTop: 6 }}>
+                                    {renderStars(item.rating)}
+                                    <span style={{ color: "#6b7280", marginLeft: 6 }}>
+                                        {item.rating.toFixed(1)}
+                                    </span>
+                                </div>
+                                <div style={{ color: "#6b7280", marginTop: 6 }}>
+                                    {item.reviews} reviews
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+
+                {/* Review Modal */}
+                {showReviewModal && selectedMenuItem && (
                     <div
-                        key={item.item_id}
-                        onClick={() => handleOpenReviewModal(item)} 
                         style={{
-                            background: "#fff",
-                            padding: 14,
-                            borderRadius: 8,
+                            position: "fixed",
+                            top: 0,
+                            left: 0,
+                            width: "100%",
+                            height: "100%",
+                            background: "rgba(0, 0, 0, 0.5)",
                             display: "flex",
-                            gap: 12,
+                            justifyContent: "center",
                             alignItems: "center",
-                            boxShadow: "0 6px 18px rgba(0,0,0,0.04)",
-                            cursor: "pointer", 
-                            transition: "box-shadow 0.2s",
+                            zIndex: 1000,
                         }}
-                        onMouseEnter={(e) => e.currentTarget.style.boxShadow = "0 8px 25px rgba(0,0,0,0.1)"}
-                        onMouseLeave={(e) => e.currentTarget.style.boxShadow = "0 6px 18px rgba(0,0,0,0.04)"}
+                        onClick={handleCloseReviewModal}
                     >
                         <div
                             style={{
-                                width: 90,
-                                height: 90,
-                                borderRadius: 8,
-                                overflow: "hidden",
+                                background: "#fff",
+                                padding: 25,
+                                borderRadius: 10,
+                                width: "90%",
+                                maxWidth: "600px",
+                                maxHeight: "90vh",
+                                overflowY: "auto",
+                                boxShadow: "0 10px 30px rgba(0,0,0,0.2)",
                             }}
+                            onClick={(e) => e.stopPropagation()}
                         >
-                            <Image
-                                src={item.image_data_url} 
-                                alt={item.item_name}
-                                width={90}
-                                height={90}
-                                style={{ objectFit: "cover" }}
-                            />
-                        </div>
-                        <div>
-                            <div style={{ fontWeight: 700 }}>{item.item_name}</div>
-                            <div style={{ display: "flex", alignItems: "center", gap: 4, marginTop: 6 }}>
-                                {renderStars(item.rating)}
-                                <span style={{ color: "#6b7280", marginLeft: 6 }}>
-                                    {item.rating.toFixed(1)}
-                                </span>
-                            </div>
-                            <div style={{ color: "#6b7280", marginTop: 6 }}>
-                                {item.reviews} reviews
-                            </div>
-                        </div>
-                    </div>
-                ))}
-            </div>
-
-            {/* Review Modal */}
-            {showReviewModal && selectedMenuItem && (
-                <div
-                    style={{
-                        position: "fixed",
-                        top: 0,
-                        left: 0,
-                        width: "100%",
-                        height: "100%",
-                        background: "rgba(0, 0, 0, 0.5)",
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        zIndex: 1000,
-                    }}
-                    onClick={handleCloseReviewModal}
-                >
-                    <div
-                        style={{
-                            background: "#fff",
-                            padding: 25,
-                            borderRadius: 10,
-                            width: "90%",
-                            maxWidth: "600px",
-                            maxHeight: "90vh",
-                            overflowY: "auto",
-                            boxShadow: "0 10px 30px rgba(0,0,0,0.2)",
-                        }}
-                        onClick={(e) => e.stopPropagation()} 
-                    >
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-                            <h3 style={{ margin: 0 }}>Reviews for {selectedMenuItem.item_name}</h3>
-                            <button 
-                                onClick={handleCloseReviewModal} 
-                                style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '20px', color: '#333' }}
-                            >
-                                <FaTimes />
-                            </button>
-                        </div>
-                        
-                        {/* Review Filter */}
-                        <div style={{ marginBottom: 15, borderBottom: '1px solid #eee', paddingBottom: 10 }}>
-                            <span style={{ fontWeight: 'bold', marginRight: 10 }}>Filter by Stars:</span>
-                            <button 
-                                onClick={() => setReviewStarFilter('all')}
-                                style={{ background: reviewStarFilter === 'all' ? '#d97706' : '#eee', color: reviewStarFilter === 'all' ? '#fff' : '#333', padding: '5px 10px', borderRadius: 5, border: 'none', cursor: 'pointer', marginRight: 5 }}
-                            >
-                                All ({currentReviews.length})
-                            </button>
-                            {[5, 4, 3, 2, 1].map(star => (
-                                <button 
-                                    key={star}
-                                    onClick={() => setReviewStarFilter(star)}
-                                    style={{ background: reviewStarFilter === star ? '#d97706' : '#eee', color: reviewStarFilter === star ? '#fff' : '#333', padding: '5px 10px', borderRadius: 5, border: 'none', cursor: 'pointer', marginRight: 5 }}
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+                                <h3 style={{ margin: 0 }}>Reviews for {selectedMenuItem.item_name}</h3>
+                                <button
+                                    onClick={handleCloseReviewModal}
+                                    style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '20px', color: '#333' }}
                                 >
-                                    {star} Star (
-                                    {currentReviews.filter(r => r.stars === star).length}
-                                    )
+                                    <FaTimes />
                                 </button>
-                            ))}
-                        </div>
+                            </div>
 
-                        {/* List of Reviews */}
-                        {reviewLoading ? (
-                            <p style={{ textAlign: 'center' }}>Loading reviews...</p>
-                        ) : reviewsToDisplay.length > 0 ? (
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: 15 }}>
-                                {reviewsToDisplay.map((review) => (
-                                    <div key={review.comment_id} style={{ border: '1px solid #eee', padding: 10, borderRadius: 5 }}>
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 5 }}>
-                                            <div style={{ display: 'flex', gap: 2 }}>{renderStars(review.stars)}</div>
-                                            <span style={{ fontWeight: 'bold' }}>User: {review.comment_id}</span> 
-                                        </div>
-                                        <p style={{ margin: 0 }}>{review.comment}</p>
-                                    </div>
+                            {/* Review Filter */}
+                            <div style={{ marginBottom: 15, borderBottom: '1px solid #eee', paddingBottom: 10 }}>
+                                <span style={{ fontWeight: 'bold', marginRight: 10 }}>Filter by Stars:</span>
+                                <button
+                                    onClick={() => setReviewStarFilter('all')}
+                                    style={{ background: reviewStarFilter === 'all' ? '#d97706' : '#eee', color: reviewStarFilter === 'all' ? '#fff' : '#333', padding: '5px 10px', borderRadius: 5, border: 'none', cursor: 'pointer', marginRight: 5 }}
+                                >
+                                    All ({currentReviews.length})
+                                </button>
+                                {[5, 4, 3, 2, 1].map(star => (
+                                    <button
+                                        key={star}
+                                        onClick={() => setReviewStarFilter(star)}
+                                        style={{ background: reviewStarFilter === star ? '#d97706' : '#eee', color: reviewStarFilter === star ? '#fff' : '#333', padding: '5px 10px', borderRadius: 5, border: 'none', cursor: 'pointer', marginRight: 5 }}
+                                    >
+                                        {star} Star (
+                                        {currentReviews.filter(r => r.stars === star).length}
+                                        )
+                                    </button>
                                 ))}
                             </div>
-                        ) : (
-                            <p style={{ textAlign: 'center', color: '#666' }}>No reviews match the current filter.</p>
-                        )}
+
+                            {/* List of Reviews */}
+                            {reviewLoading ? (
+                                <p style={{ textAlign: 'center' }}>Loading reviews...</p>
+                            ) : reviewsToDisplay.length > 0 ? (
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: 15 }}>
+                                    {reviewsToDisplay.map((review) => (
+                                        <div key={review.comment_id} style={{ border: '1px solid #eee', padding: 10, borderRadius: 5 }}>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 5 }}>
+                                                <div style={{ display: 'flex', gap: 2 }}>{renderStars(review.stars)}</div>
+                                                <span style={{ fontWeight: 'bold' }}>User: {review.comment_id}</span>
+                                            </div>
+                                            <p style={{ margin: 0 }}>{review.comment}</p>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <p style={{ textAlign: 'center', color: '#666' }}>No reviews match the current filter.</p>
+                            )}
+                        </div>
                     </div>
-                </div>
-            )}
-        </div>
+                )}
+            </div>
+        </main></>
     );
 }
