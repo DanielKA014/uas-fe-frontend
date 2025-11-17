@@ -24,6 +24,13 @@ export default function ReviewPage() {
   const [reviews, setReviews] = useState<ReviewUI[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [totalReviews, setTotalReviews] = useState(0);
+  const [badgeCounts, setBadgeCounts] = useState<{ [key: string]: number }>({
+    "rasa-enak": 0,
+    "porsi-pas": 0,
+    "bersih": 0,
+  });
+  const [recentRatings, setRecentRatings] = useState<number[]>([]);
 
   const badges = [
     {
@@ -36,7 +43,7 @@ export default function ReviewPage() {
           height={40}
         />
       ),
-      count: 80,
+      count: badgeCounts["rasa-enak"] || 0,
     },
     {
       name: "porsi-pas",
@@ -48,19 +55,19 @@ export default function ReviewPage() {
           height={40}
         />
       ),
-      count: 70,
+      count: badgeCounts["porsi-pas"] || 0,
     },
     {
       name: "bersih",
       icon: (
         <Image
           src="/images/review/bersih.webp"
-          alt="Porsi Pas"
+          alt="Bersih"
           width={40}
           height={40}
         />
       ),
-      count: 60,
+      count: badgeCounts["bersih"] || 0,
     },
   ];
 
@@ -105,6 +112,26 @@ export default function ReviewPage() {
       if (Array.isArray(data)) {
         const reviews = await Promise.all(data.map(mapServerToUI))
         setReviews(reviews);
+        setTotalReviews(reviews.length);
+        
+        // Calculate badge counts
+        const counts: { [key: string]: number } = {
+          "rasa-enak": 0,
+          "porsi-pas": 0,
+          "bersih": 0,
+        };
+        
+        data.forEach((review: any) => {
+          if (review.overview && counts.hasOwnProperty(review.overview)) {
+            counts[review.overview]++;
+          }
+        });
+        
+        setBadgeCounts(counts);
+        
+        // Get recent ratings (last 7 or available)
+        const recent = data.slice(0, 7).map((r: any) => r.stars);
+        setRecentRatings(recent);
       } else {
         setError('Unexpected response from server');
       }
@@ -184,10 +211,10 @@ export default function ReviewPage() {
               />
             ))}
           </div>
-          <p className="text-muted mt-1">1rb+ rating</p>
+          <p className="text-muted mt-1">{totalReviews}+ rating</p>
           <p className="text-muted mt-1">Recent Rating</p>
           <div className="d-flex flex-wrap gap-2">
-            {[4, 4, 5, 5, 5, 5, 5].map((r: number, i: number) => (
+            {recentRatings.map((r: number, i: number) => (
               <div
                 key={i}
                 className="d-flex align-items-center border rounded-pill px-3 py-1 bg-light"
