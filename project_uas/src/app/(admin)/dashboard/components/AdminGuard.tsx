@@ -49,7 +49,7 @@ export default function AdminGuard({ children }: { children: React.ReactNode }) 
 
   if (loading) {
     return (
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
+      <div style={{ display: 'flex', height: '100vh' }} className="justify-content-center align-item-center">
         <div>Checking permissions...</div>
       </div>
     );
