@@ -1,5 +1,6 @@
 import React from "react";
 import Sidebar from "./components/sidebar";
+import AdminGuard from "./components/AdminGuard";
 
 export const dynamic = 'force-static';
 export const runtime = 'edge';
@@ -28,7 +29,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             }}
             className="p-4"
           >
-            {children}
+            <AdminGuard>
+              {children}
+            </AdminGuard>
           </main>
         </div>
       </body>
