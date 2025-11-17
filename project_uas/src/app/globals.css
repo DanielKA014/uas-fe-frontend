@@ -46,3 +46,25 @@ section {
   padding-top: 0;
   margin-top: 0;
 }
+
+/* Hide default browser scrollbar while keeping scrolling behavior
+   - WebKit (Chrome, Safari): set scrollbar size to 0
+   - Firefox: use scrollbar-width: none
+   - IE/Edge (legacy): -ms-overflow-style: none
+   Accessibility note: hiding the scrollbar removes the visual cue
+   but scrolling via wheel/trackpad/keyboard/touch still works. */
+
+html,
+body,
+* {
+  scrollbar-width: none;
+}
+
+html {
+  -ms-overflow-style: none;
+}
+
+::-webkit-scrollbar {
+  width: 0px;
+  height: 0px;
+}
