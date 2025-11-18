@@ -12,10 +12,10 @@ exports.findAll = async () => {
 }
 
 // return non credentials
-exports.findOne = async () => {
+exports.findOne = async (userId) => {
     try{
-        const sqlQuery = 'SELECT id, username, role, created_at, updated_at FROM users'
-        const res = await pool.query(sqlQuery);
+        const sqlQuery = 'SELECT id, username, role, created_at, updated_at FROM users WHERE id = $1'
+        const res = await pool.query(sqlQuery, [userId]);
 
         return res.rows[0];
     } catch (err) {
@@ -56,5 +56,17 @@ exports.createUser = async (username, email, hashedPassword) => {
         return res.rows[0]
     } catch (err){
         throw new Error('Failed to create user', err)
+    }
+}
+
+exports.updateUserPassword = async (email, hashedPassword) => {
+    try{
+        const sqlQuery = `UPDATE users SET password = $1 WHERE email = $2 RETURNING *`
+        const values = [hashedPassword, email]
+        const res = await pool.query(sqlQuery, values);
+        return res.rows[0]
+    } catch (err) { 
+        // console.log(err)
+        throw new Error('Failed to update user password', err);
     }
 }

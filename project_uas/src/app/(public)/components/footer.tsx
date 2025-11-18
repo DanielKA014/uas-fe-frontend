@@ -5,6 +5,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { FaInstagram, FaWhatsapp } from 'react-icons/fa';
 import { SiGojek, SiGrab, SiShopee } from 'react-icons/si';
 import { useEffect, useState } from 'react';
+import { decodeHtml } from '@/app/utils/htmldecoder';
 
 interface AddressType {
     id: number;
@@ -12,14 +13,6 @@ interface AddressType {
     kelurahan: string;
     kabupaten_kota: string;
     provinsi: string;
-}
-
-export function decodeHtml(str: string) {
-  if (typeof window === "undefined") return str;
-
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(str, "text/html");
-  return doc.documentElement.textContent.toString();
 }
 
 export default function Footer() {

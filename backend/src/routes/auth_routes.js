@@ -7,19 +7,7 @@ const { passportAuth, isTokenBlacklisted } = require('../middlewares/authenticat
 router.post('/register', createUserValidator, users.createUser)
 router.post('/login', users.userLogin)
 router.post('/logout', users.userLogout)
-
-router.get(
-    '/me',
-    isTokenBlacklisted,
-    passportAuth,
-    (req, res) => {
-        res.json({
-            id: req.user.id,
-            username: req.user.username,
-            email: req.user.email,
-            role: req.user.role
-        })
-    }
-)
+router.post('/reset-password', users.updatePassword);
+router.get('/me', isTokenBlacklisted, passportAuth, users.getCurrentUser);
 
 module.exports = router;

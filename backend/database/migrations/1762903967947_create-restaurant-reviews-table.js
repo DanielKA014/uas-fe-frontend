@@ -24,9 +24,9 @@ export const up = (pgm) => {
             type: 'VARCHAR(512)',
             notNull: true
         },
-        overview: {
-            type: 'review_overviews',
-            default: 'lainnya',
+        overviews: {
+            type: 'review_overviews[]',
+            default: '{"lainnya"}',
             notNull: true,
         },
         created_at: {

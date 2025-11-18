@@ -98,15 +98,19 @@ exports.getUserInfoById = async (req, res, next) => {
 };
 
 exports.getCurrentUser = async (req, res, next) => {
-  try {
-    const user = req.user;
-    if (!user)
-      return res.status(401).json({ message: "You're not logged in!" });
-    else return res.status(200).json(user);
-  } catch (err) {
-    return next(err);
-  }
-};
+    try{
+        const user = req.user
+        if (!user) return res.status(401).json({message: "You\'re not logged in!"});
+        else return res.status(200).json({
+            id: user.id,
+            username: user.username,
+            email: user.email,
+            role: user.role
+        });
+    } catch (err){
+        return next(err);
+    }
+}
 
 exports.createUser = async (req, res, next) => {
   try {
@@ -148,21 +152,40 @@ exports.createUser = async (req, res, next) => {
   }
 };
 
-// exports.updateUserInfo = async (req, res, next) => {
-//     try{
-//         const validationError = validationResult(req)
-//         if (!validationError.isEmpty()){
-//             return res.status(400).json(validationError);
-//         }
+exports.updatePassword = async (req, res, next) => {
+    try{
+        const validationError = validationResult(req);
+        if (!validationError.isEmpty()){
+            return res.status(400).json(validationError);
+        }
 
-//         const {
-//             newUsername,
-//             newEmail,
-//         } = req.body;
-//         const userId = req.params.id;
-//         const user = await usersModel.findUserById(userId);
+        const {
+            email,
+            new_password,
+            confirm_new_password
+        } = req.body
 
-//     } catch (err) {
-//         return next(err)
-//     }
-// }
+        const dbEmail = await usersModel.findUserByEmail(email);
+        if (!dbEmail){
+            return res.status(404).json({message: "Email doesn't exists!"});
+        }
+
+        const confirmMatched = (new_password === confirm_new_password) ? true : false
+
+        let hashedPassword;
+        if (confirmMatched){
+            hashedPassword = await pass.hashPassword(new_password)
+        } else{
+            return res.status(400).json({message: "Password and confirm password doesn't match!"})
+        }
+
+        const updated = await usersModel.updateUserPassword(
+            email,
+            hashedPassword,
+        )   
+
+        if (updated) return res.status(200).json({message: "Password updated successfully."});
+    } catch (err){
+        return next(err);
+    }
+}

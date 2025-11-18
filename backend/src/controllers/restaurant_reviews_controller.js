@@ -24,22 +24,21 @@ exports.addRestaurantReview = async (req, res, next) => {
         if (!validationError.isEmpty()){
             return res.status(400).json(validationError);
         }
-        const foodId = req.params.id
         const user = req.user;
         const userId = user ? user.id : null
 
         const {
             stars,
             comment,
-            overview
+            overviews
         } = req.body
 
-        let tempOverview = overview
-        if (tempOverview === undefined || tempOverview === null){
-            tempOverview = 'lainnya';
+        let tempOverviews = overviews
+        if (tempOverviews === undefined || tempOverviews === null){
+            tempOverviews = ['lainnya'];
         }
 
-        const review = await reviewModel.addReview(stars, comment, tempOverview, userId);
+        const review = await reviewModel.addReview(stars, comment, tempOverviews, userId);
         if (!review){
             return res.status(500).json({message: "Failed to add food review!"});
         } else{
