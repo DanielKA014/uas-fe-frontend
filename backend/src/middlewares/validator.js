@@ -211,7 +211,10 @@ exports.reviewValidator = [
 ]
 
 exports.restaurantReviewsEnumValidator = [
-    body('overview')
+    body('overviews')
+        .optional()
+        .isArray().withMessage('Overviews must be an array field!'),
+    body('overviews.*')
         .optional()
         .isIn(['rasa-enak', 'porsi-pas', 'bersih', 'lainnya'])
         .withMessage('Review overview must be rasa-enak, porsi-pas, bersih, or "lainnya"!'),

@@ -6,6 +6,7 @@ import { FaStar } from "react-icons/fa";
 import { Modal, Button } from "react-bootstrap";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "./page.css";
+import Pagination from "../components/pagination";
 
 interface MenuItem {
   id: number;
@@ -38,6 +39,7 @@ export default function MenuItem() {
   const [newComment, setNewComment] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [loadingReviews, setLoadingReviews] = useState(false);
+  const [totalItems, setTotalItems] = useState(0);
   const itemsPerPage = 8;
 
   const formatCategory = (cat: string) => {
@@ -57,13 +59,37 @@ export default function MenuItem() {
     }
   };
 
+  const getCategoryParam = (cat: String) => {
+    switch(cat){
+      case "Main Dish":
+        return "main-dish"; 
+      case "Add on":
+        return "add-on"
+      default:
+        return cat.toLowerCase();
+    }
+  }
+
   // Fetch menu items
   useEffect(() => {
     const fetchFoods = async () => {
       try {
-        const response = await fetch("http://localhost:3001/api/foods/?limit=100&page=1");
+        const params = new URLSearchParams({
+          limit: String(itemsPerPage),
+          page: String(currentPage),
+        });
+
+        if (filter !== "All") {
+          const categoryParam = getCategoryParam(filter);
+          params.append('category', categoryParam);
+        }
+
+        const response = await fetch(`http://localhost:3001/api/foods/?${params.toString()}`);
           
         const data = await response.json();
+
+        const foodAmount = parseInt(data.count)
+        setTotalItems(foodAmount);
 
         const formatted = data.result.map((item: any) => ({
           id: item.item_id,
@@ -81,9 +107,8 @@ export default function MenuItem() {
     };
 
     fetchFoods();
-  }, []);
+  }, [filter, currentPage]);
 
-  // Set filter based on query parameter
   useEffect(() => {
     if (categoryParam) {
       setFilter(categoryParam);
@@ -174,10 +199,7 @@ export default function MenuItem() {
       ? menuItems
       : menuItems.filter((item) => item.category === filter);
 
-  const lastIndex = currentPage * itemsPerPage; 
-  const firstIndex = lastIndex - itemsPerPage;
-  const currentItems = filteredMenu.slice(firstIndex, lastIndex);
-  const totalPages = Math.ceil(filteredMenu.length / itemsPerPage);
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
 
   useEffect(() => {
     setCurrentPage(1);
@@ -185,6 +207,14 @@ export default function MenuItem() {
 
   const averageRating = calculateAverageRating();
   const totalRatings = reviews.length;
+
+  const formatPrice = (priceStr: string) => {
+    const price = parseInt(priceStr)
+    const formatted = new Intl.NumberFormat('id-ID', {style: 'currency',currency: 'IDR' }).format(
+      price
+    )
+    return formatted;
+  }
 
   return (
     <div className="container py-5" id="menu">
@@ -217,7 +247,7 @@ export default function MenuItem() {
 
       {/* Menu Card */}
       <div className="row g-4">
-        {currentItems.map((item) => (
+        {menuItems.map((item) => (
           <div
             className="col-12 col-sm-6 col-md-4 col-lg-3"
             key={item.id}
@@ -233,7 +263,7 @@ export default function MenuItem() {
               />
               <div className="card-body d-flex flex-column">
                 <h6 className="fw-bold text-danger fs-4 text-center">
-                  RP. {item.price}
+                  {formatPrice(item.price)}
                 </h6>
                 <h5 className="card-title text-center fs-5">{item.name}</h5>
                 <p className="card-text text-muted small text-truncate-2">
@@ -247,23 +277,11 @@ export default function MenuItem() {
 
       {/* Pagination */}
       {filteredMenu.length > 0 && totalPages > 0 && ( 
-        <div className="d-flex justify-content-center mt-4">
-          <div className="btn-group">
-            {[...Array(totalPages)].map((_, i) => (
-              <button
-                key={i}
-                className={`btn ${
-                  currentPage === i + 1
-                    ? "btn-danger text-white"
-                    : "btn-outline-secondary"
-                }`}
-                onClick={() => setCurrentPage(i + 1)}
-              >
-                {i + 1}
-              </button>
-            ))}
-          </div>
-        </div>
+        <Pagination
+          totalPages={totalPages} 
+          currentPage={currentPage}
+          onPageChange={setCurrentPage}
+        />
       )}
 
       {/* Modal */}
@@ -286,7 +304,7 @@ export default function MenuItem() {
                     alt={selectedItem.name}
                     className="img-fluid rounded mb-3"
                   />
-                  <h5 className="fw-bold text-danger">RP. {selectedItem.price}</h5>
+                  <h5 className="fw-bold text-danger">{formatPrice(selectedItem.price)}</h5>
                   <p className="text-muted small">{selectedItem.description}</p>
                 </div>
 
@@ -307,7 +325,7 @@ export default function MenuItem() {
                               color: starValue <= Math.floor(averageRating)
                                 ? "#ffc107"
                                 : isHalf
-                                ? "#ffc107" // You can implement half stars with CSS
+                                ? "#ffc107"
                                 : "#e4e5e9",
                             }}
                           >

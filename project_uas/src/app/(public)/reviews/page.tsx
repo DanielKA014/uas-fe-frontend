@@ -4,6 +4,7 @@ import { Container, Row, Col, Button, Modal, Form } from "react-bootstrap";
 import { FaStar } from "react-icons/fa";
 import Image from "next/image";
 import "./page.css";
+import Pagination from "../components/pagination";
 
 export default function ReviewPage() {
   const [selectedRating, setSelectedRating] = useState<number | null>(null);
@@ -89,20 +90,28 @@ export default function ReviewPage() {
   // transform backend review row to frontend shape
   const mapServerToUI = async (row: any): Promise<ReviewUI> => {
     let username = "";
+    let overviewsArr: string[] = [];
     if (row.user_id){
       const user = await getUserById(row.user_id);
       console.log(user);
       username = user
     }
+
+    if (row.overviews){
+      const arr = row.overviews;
+      arr.forEach((item: string) => {
+        overviewsArr.push(item)
+      });
+    }
     return {
       name: row.user_id ? `${username}` : "Anonymous",
       rating: row.stars ?? 0,
       text: row.comment ?? "",
-      badges: row.overview ? [row.overview] : [],
+      badges: row.overviews ? overviewsArr : [],
     };
   };
 
-  const fetchReviews = useCallback(async (page = 1, limit = 20) => {
+  const fetchReviews = useCallback(async (page = 1, limit = 8) => {
     setLoading(true);
     setError(null);
     try {
@@ -122,11 +131,15 @@ export default function ReviewPage() {
         };
         
         data.forEach((review: any) => {
-          if (review.overview && counts.hasOwnProperty(review.overview)) {
-            counts[review.overview]++;
+          if (Array.isArray(review.overviews)) {
+            review.overviews.forEach((badge: string) => {
+              if (counts.hasOwnProperty(badge)) {
+                counts[badge]++;
+              }
+            });
           }
         });
-        
+
         setBadgeCounts(counts);
         
         // Get recent ratings (last 7 or available)
@@ -157,18 +170,21 @@ export default function ReviewPage() {
   const handleAddComment = async () => {
     if (newRating <= 0 || newComment.trim() === "") return;
 
-    const overviewValue = selectedBadges.length > 0 ? selectedBadges[0] : 'lainnya';
+    const overviewValue = selectedBadges.length > 0 ? selectedBadges : ['lainnya'];
 
     const payload = {
       stars: newRating,
       comment: newComment,
-      overview: overviewValue,
+      overviews: overviewValue,
     };
 
     try {
       const res = await fetch('http://localhost:3001/api/restaurant-reviews/add', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
         body: JSON.stringify(payload),
       });
 
@@ -184,6 +200,7 @@ export default function ReviewPage() {
       setNewComment('');
       setSelectedBadges([]);
       setShowModal(false);
+      fetchReviews();
     } catch (err: any) {
       alert(err.message || 'Failed to submit review');
     }
@@ -287,6 +304,11 @@ export default function ReviewPage() {
           </div>
         </div>
       ))}
+
+      <Pagination totalPages={0} currentPage={0} onPageChange={function (page: number): void {
+        throw new Error("Function not implemented.");
+      } }        
+      />
 
       <div className="text-center mt-4">
         <Button variant="danger" onClick={() => setShowModal(true)}>

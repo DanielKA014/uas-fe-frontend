@@ -12,10 +12,10 @@ exports.findAll = async () => {
 }
 
 // return non credentials
-exports.findOne = async () => {
+exports.findOne = async (userId) => {
     try{
-        const sqlQuery = 'SELECT id, username, role, created_at, updated_at FROM users'
-        const res = await pool.query(sqlQuery);
+        const sqlQuery = 'SELECT id, username, role, created_at, updated_at FROM users WHERE id = $1'
+        const res = await pool.query(sqlQuery, [userId]);
 
         return res.rows[0];
     } catch (err) {

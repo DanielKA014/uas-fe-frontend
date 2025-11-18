@@ -39,7 +39,7 @@ export default function Login() {
       localStorage.setItem('token', jwtToken);
       // console.log('Token:', jwtToken);
 
-      const user = await fetch('http://localhost:3001/api/users/current', {
+      const user = await fetch('http://localhost:3001/api/auth/me', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

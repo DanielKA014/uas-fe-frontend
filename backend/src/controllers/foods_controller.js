@@ -2,12 +2,28 @@ const foodsModel = require('../models/foods_model.js');
 const { validationResult } = require('express-validator');
 
 exports.getFoods = async (req, res, next) =>{
+    const categories = ['main-dish', 'beverages', 'vegetables', 'add-on']
     try {
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 8;
+        const category = req.query.category;
         const offset = (page - 1) * limit;
 
-        const dbFoods = await foodsModel.findAll(limit, offset);
+        if (category && !categories.includes(category)){
+            return res.status(400).json({
+                message: "Category parameters must be main-dish, beverages, vegetables, or add-on!"
+            })
+        }
+
+        let dbFoods;
+        if (!category){
+            count = await foodsModel.countAll();
+            dbFoods = await foodsModel.findAll(limit, offset);
+        } else{
+            count = await foodsModel.countByCategory(category);
+            dbFoods = await foodsModel.findAllByCategory(category, limit, offset);
+        }
+
         if(!dbFoods) return res.status(500).json({message: "Error on fetching foods data."});
 
         let result = []
@@ -26,8 +42,12 @@ exports.getFoods = async (req, res, next) =>{
             }
             result.push(obj)
         });
+
+        let countNumber;
+        if (count) countNumber = parseInt(count)
         return res.status(200).json({
             message: "Fetched foods on database.",
+            count: countNumber,
             currPage: page,
             itemsPerPage: limit,
             result
