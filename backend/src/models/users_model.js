@@ -58,3 +58,15 @@ exports.createUser = async (username, email, hashedPassword) => {
         throw new Error('Failed to create user', err)
     }
 }
+
+exports.updateUserPassword = async (email, hashedPassword) => {
+    try{
+        const sqlQuery = `UPDATE users SET password = $1 WHERE email = $2 RETURNING *`
+        const values = [hashedPassword, email]
+        const res = await pool.query(sqlQuery, values);
+        return res.rows[0]
+    } catch (err) { 
+        // console.log(err)
+        throw new Error('Failed to update user password', err);
+    }
+}
