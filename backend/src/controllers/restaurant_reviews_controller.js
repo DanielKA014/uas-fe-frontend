@@ -11,7 +11,12 @@ exports.getRestaurantReviews = async (req, res, next) =>{
         if (!reviews){
             return res.status(500).json({message: "Failed to fetch food reviews"})
         } else{
-            return res.status(200).json(reviews)
+            const count = await reviewModel.countReviews();
+            const countNumber = parseInt(count)
+            return res.status(200).json({
+                count: countNumber,
+                reviews
+            })
         }
     } catch (err) {
         return next(err);

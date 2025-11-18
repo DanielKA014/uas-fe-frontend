@@ -17,7 +17,7 @@ exports.getFoods = async (req, res, next) =>{
 
         let dbFoods;
         if (!category){
-            count = await foodsModel.countAll();
+            count = await foodsModel.countFoods();
             dbFoods = await foodsModel.findAll(limit, offset);
         } else{
             count = await foodsModel.countByCategory(category);

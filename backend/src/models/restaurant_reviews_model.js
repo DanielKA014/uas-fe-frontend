@@ -30,3 +30,13 @@ exports.addReview = async (stars, comment, overviews, userId) => {
         throw new Error('Failed to add food review', err)
     }
 }
+
+exports.countReviews = async () => {
+    try{
+        const sqlQuery = 'SELECT COUNT(*) FROM restaurant_reviews'
+        const res = await pool.query(sqlQuery);
+        return res.rows[0].count
+    } catch (err){
+        throw new Error('Failed to count restaurant reviews', err)
+    }
+}
