@@ -41,6 +41,39 @@ exports.createUserValidator = [
         .withMessage(('Password length must be between 8 to 255 characters long!'))
 ];
 
+exports.updateUserValidator = [
+    body('new_username')
+        .optional()
+        .notEmpty().withMessage('Username is required!')
+        .isString().withMessage('Username must be of string data type!')
+        .trim().escape()
+        .matches(/^[a-zA-Z0-9_.\- ]+$/) 
+        .withMessage('Username can only contain alphanumeric characters, underscores, dots, spaces, and hyphens!')
+        .isLength({min: 3, max: 32})
+        .withMessage(('Username length must be between 3 to 32 characters long!')),
+
+    body('new_email')
+        .optional()
+        .notEmpty().withMessage('Email is required!')
+        .trim().escape()
+        .isEmail().withMessage('Invalid email address!')
+        .normalizeEmail(),
+
+    body('password')
+        .notEmpty().withMessage('Password is required!')
+        .isString().withMessage('Password must be of string data type!')
+        .isLength({min: 8, max: 255})
+        .withMessage(('Password length must be between 8 to 255 characters long!'))
+]
+
+exports.emailValidator = [
+     body('email')
+        .notEmpty().withMessage('Email is required!')
+        .trim().escape()
+        .isEmail().withMessage('Invalid email address!')
+        .normalizeEmail(),
+]
+
 exports.foodValidator = [
     body('item_name')
         .notEmpty().withMessage('Food name is required!')

@@ -59,7 +59,7 @@ exports.createUser = async (username, email, hashedPassword) => {
     }
 }
 
-exports.updateUserPassword = async (email, hashedPassword) => {
+exports.resetPassword = async (email, hashedPassword) => {
     try{
         const sqlQuery = `UPDATE users SET password = $1 WHERE email = $2 RETURNING *`
         const values = [hashedPassword, email]
@@ -68,5 +68,36 @@ exports.updateUserPassword = async (email, hashedPassword) => {
     } catch (err) { 
         // console.log(err)
         throw new Error('Failed to update user password', err);
+    }
+}
+
+exports.updateUserInfo = async (updates, userId) => {
+    try{
+        const setClauses = []
+        const values = []
+        var count = 1
+
+        let clause;
+        for (const key in updates){
+            clause = key + ' = ' + '$' + count.toString()
+            console.log(clause)
+            setClauses.push(clause)
+            values.push(updates[key])
+            count++;
+        }
+
+        values.push(userId)
+        console.log(values)
+
+        const clausesStr = setClauses.join(', ')
+
+        const sqlQuery = `UPDATE users SET ${clausesStr} 
+                            WHERE id = $${count}
+                            RETURNING id, username, email`
+        const res = await pool.query(sqlQuery, values)
+        return res.rows[0]
+    } catch (err) {
+        console.log(err)
+        throw new Error('Failed to update user info', err);
     }
 }

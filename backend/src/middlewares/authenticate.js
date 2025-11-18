@@ -12,7 +12,7 @@ async function checkAdminRole (req, res, next)  {
         if (req.user?.role === 'admin'){
             return next();
         } else{
-            return res.status(403).send('You\'re not permitted to access this page!')
+            return res.status(403).json({message: 'You\'re not permitted to access this page!'})
         }
     } catch (err) {
         return next(err)
@@ -23,7 +23,7 @@ async function isTokenBlacklisted(req, res, next){
     try {
         const header = req.headers['authorization']
         if (!header || !header.startsWith('Bearer ')){
-            return res.status(400).send("Not a bearer token!")
+            return res.status(400).json({message: "Not a bearer token!"})
         }
 
         const token  = header.split(' ')[1]
@@ -31,7 +31,7 @@ async function isTokenBlacklisted(req, res, next){
 
         if (blacklisted){
             //console.log('yes your token is blacklisted')
-            return res.status(401).send("Your session has expired!")
+            return res.status(401).json({message: "Your session has expired!"})
         } else{
             return next();
         }
