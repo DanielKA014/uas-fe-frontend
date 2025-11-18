@@ -11,9 +11,10 @@ export default function ReviewPage() {
   const [showModal, setShowModal] = useState(false);
   const [newRating, setNewRating] = useState(0);
   const [newComment, setNewComment] = useState("");
-  // const [username, setUsername] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
   const [hover, setHover] = useState(0);
   const [selectedBadges, setSelectedBadges] = useState<string[]>([]);
+  const reviewsPerPage = 8;
 
   type ReviewUI = {
     name: string;
@@ -111,17 +112,18 @@ export default function ReviewPage() {
     };
   };
 
-  const fetchReviews = useCallback(async (page = 1, limit = 8) => {
+  const fetchReviews = useCallback(async (page = currentPage, limit = reviewsPerPage) => {
     setLoading(true);
     setError(null);
     try {
       const res = await fetch(`http://localhost:3001/api/restaurant-reviews/?page=${page}&limit=${limit}`);
       if (!res.ok) throw new Error(`Failed to fetch: ${res.status}`);
-      const data = await res.json();
+      const json = await res.json();
+      const data = json.reviews;
       if (Array.isArray(data)) {
         const reviews = await Promise.all(data.map(mapServerToUI))
         setReviews(reviews);
-        setTotalReviews(reviews.length);
+        setTotalReviews(parseInt(json.count));
         
         // Calculate badge counts
         const counts: { [key: string]: number } = {
@@ -153,7 +155,7 @@ export default function ReviewPage() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [currentPage]);
 
   useEffect(() => {
     fetchReviews();
@@ -213,6 +215,8 @@ export default function ReviewPage() {
     selectedRating !== null
       ? reviews.filter((r) => r.rating === selectedRating)
       : reviews;
+
+  const totalPages = Math.ceil(totalReviews / reviewsPerPage)
 
   return (
     <Container className="py-5">
@@ -305,9 +309,8 @@ export default function ReviewPage() {
         </div>
       ))}
 
-      <Pagination totalPages={0} currentPage={0} onPageChange={function (page: number): void {
-        throw new Error("Function not implemented.");
-      } }        
+
+      <Pagination totalPages={totalPages} currentPage={currentPage} onPageChange={setCurrentPage}        
       />
 
       <div className="text-center mt-4">
