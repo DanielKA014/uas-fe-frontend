@@ -4,7 +4,6 @@ import { useSearchParams } from "next/navigation";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { FaStar } from "react-icons/fa";
 import { Modal, Button } from "react-bootstrap";
-import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "./page.css";
 import Pagination from "../components/pagination";
 
@@ -28,6 +27,9 @@ interface Review {
 const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_BASE_URL
 
 export default function MenuItem() {
+  useEffect(() => {
+    require("bootstrap/dist/js/bootstrap.bundle.min.js");
+  }, []);
   const searchParams = useSearchParams();
   const categoryParam = searchParams.get('category');
   
