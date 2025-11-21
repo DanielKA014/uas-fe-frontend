@@ -36,13 +36,9 @@ export default function Home() {
             variant="outline-secondary"
             size="lg"
             className="rounded-pill px-4 py-2"
-            color="white"
+            onClick={() => router.push('/menu')}
           >
-            <a href="/menu"
-              style={{color: 'black', textDecoration: 'none'}}
-            >
-              Explore Menu
-            </a>
+            Explore Menu
           </Button>
         </div>  
       </section>
