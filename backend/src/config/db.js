@@ -1,16 +1,22 @@
-const { Pool } = require('pg');
 require('dotenv').config()
+const { Pool } = require('pg');
+const fs = require('fs');
+const path = require('path');
+
+console.log(process.env.DB_HOST)
+console.log(process.env.DB_PORT)
+console.log(process.env.DB_USER)
  
 const pool = new Pool({
-    host: process.env.HOST_NAME,
+    host: process.env.DB_HOST,
     user: process.env.DB_USER,
     database: process.env.DB_NAME,
     port: process.env.DB_PORT,
     password: process.env.DB_PASSWORD,
-    max: 10,
-    idleTimeoutMillis: 30000,
-    connectionTimeoutMillis: 2000,
-    maxLifetimeSeconds: 60
+    ssl: {
+        rejectUnauthorized: true,
+        ca: fs.readFileSync(path.join(__dirname, 'ca.pem')).toString(),
+    }
 })
 
 pool.on('error', (err, client) => {
@@ -19,7 +25,11 @@ pool.on('error', (err, client) => {
 })
 
 pool.connect( (err, connection) => {
-    if (err) throw err;
+    pool.query("SELECT VERSION()", [], function (err, result) {
+        if (err) throw err;
+
+        console.log(result.rows[0]);
+    });
     console.log('Connected to the PostgreSQL Database.');
     connection.release();
 }); 
