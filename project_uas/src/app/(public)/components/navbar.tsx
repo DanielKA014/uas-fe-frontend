@@ -8,6 +8,8 @@ import { usePathname } from "next/navigation";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../../globals.css";
 
+const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_BASE_URL
+
 export default function NavbarComponent() {
     const pathname = usePathname();
     const [user, setUser] = useState<any>(null);
@@ -24,7 +26,7 @@ export default function NavbarComponent() {
             if (!token) return;
 
             try {
-                const res = await fetch("http://localhost:3001/api/auth/me", {
+                const res = await fetch(`${BASE_URL}/api/auth/me`, {
                     method: "GET",
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -54,7 +56,7 @@ export default function NavbarComponent() {
         const token = localStorage.getItem("token");
 
         try {
-            await fetch("http://localhost:3001/api/auth/logout", {
+            await fetch(`${BASE_URL}/api/auth/logout`, {
                 method: "POST",
                 headers: {
                     Authorization: `Bearer ${token}`,

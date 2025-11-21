@@ -15,13 +15,15 @@ interface AddressType {
     provinsi: string;
 }
 
+const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_BASE_URL
+
 export default function Footer() {
     const [addresses, setAddresses] = useState<AddressType[]>([]);
 
     useEffect(() => {
     const fetchAddresses = async () => {
         try {
-            const response = await fetch("http://localhost:3001/api/address/");
+            const response = await fetch(`${BASE_URL}/api/address/`);
             
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);

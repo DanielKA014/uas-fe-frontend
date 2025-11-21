@@ -3,13 +3,15 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
+const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_BASE_URL
+
 export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
 
   const handleLogout = async () => {
     try {
-      const res = await fetch('http://localhost:3001/api/auth/logout', {
+      const res = await fetch(`${BASE_URL}/api/auth/logout`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,

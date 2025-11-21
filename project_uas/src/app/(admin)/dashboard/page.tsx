@@ -4,7 +4,6 @@ import { useState, useEffect, useCallback } from "react";
 import { FaStar, FaStarHalfAlt, FaRegStar, FaTimes } from "react-icons/fa";
 import Sidebar from "./components/sidebar";
 
-// --- Tipe Data Frontend ---
 type MenuItemType = {
   item_id: number;
   item_name: string;
@@ -18,7 +17,6 @@ type FoodReview = {
   comment_id: number;
   stars: number;
   comment: string;
-  // Tambahkan user_id atau username jika tersedia di skema DB
 };
 
 type RestaurantRating = {
@@ -26,11 +24,11 @@ type RestaurantRating = {
   totalReviews: number;
 }
 
-// Tambahkan deklarasi Buffer Node.js secara eksplisit jika environment Next.js client component belum menginjeksikannya
 declare const Buffer: any; 
 
-const BASE_URL = "http://localhost:3001/api/foods";
-const RESTAURANT_BASE_URL = "http://localhost:3001/api/restaurant-reviews"; // Asumsi route untuk restaurant review
+const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_BASE_URL
+const FOODS_BASE_URL = `${BASE_URL}/api/foods`;
+const RESTAURANT_BASE_URL = `${BASE_URL}/api/restaurant-reviews`;
 
 export default function AdminHome() {
     // ... (State declarations remain the same) ...
@@ -46,38 +44,12 @@ export default function AdminHome() {
     const [reviewLoading, setReviewLoading] = useState(false);
     const [reviewStarFilter, setReviewStarFilter] = useState<number | 'all'>('all');
 
-    // const [authStatus, setAuthStatus] = useState<"loading" | "authorized" | "unauthorized" | "forbidden">("loading");
-
-    // useEffect(() => {
-    //     const checkAuth = async () => {
-    //         try {
-    //             const res = await fetch("http://localhost:3001/api/users/current");
-
-    //             if (res.status === 401) {
-    //                 setAuthStatus("unauthorized");
-    //                 return;
-    //             }
-    //             if (res.status === 403) {
-    //                 setAuthStatus("forbidden");
-    //                 return;
-    //             }
-
-    //             setAuthStatus("authorized");
-    //         } catch (err) {
-    //             setError("Authorization failed!");
-    //             setAuthStatus("unauthorized");
-    //         }
-    //     };
-
-    //     checkAuth();
-    // }, []);
-
     // --- 1. Fungsi Fetch Ulasan Menu Tertentu (Unchanged) ---
     const fetchMenuReviews = useCallback(async (itemId: number) => {
         setReviewLoading(true);
         setCurrentReviews([]);
         try {
-            const res = await fetch(`${BASE_URL}/${itemId}/reviews?limit=100`);
+            const res = await fetch(`${FOODS_BASE_URL}/${itemId}/reviews?limit=100`);
             if (!res.ok) throw new Error(`Failed to fetch reviews: ${res.status}`);
 
             const data: FoodReview[] = await res.json();
@@ -112,7 +84,7 @@ export default function AdminHome() {
         setLoading(true);
         setError(null);
         try {
-            const res = await fetch(`${BASE_URL}?limit=100`);
+            const res = await fetch(`${FOODS_BASE_URL}?limit=100`);
             if (!res.ok) throw new Error(`Failed to fetch menus: ${res.status}`);
 
             const data = await res.json();
