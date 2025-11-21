@@ -27,10 +27,7 @@ interface Review {
 
 const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_BASE_URL
 
-export default function MenuItem() {
-  useEffect(() => {
-    require("bootstrap/dist/js/bootstrap.bundle.min.js");
-  }, []);
+function MenuContent() {
   const searchParams = useSearchParams();
   const categoryParam = searchParams.get('category');
   
@@ -222,13 +219,6 @@ export default function MenuItem() {
   }
 
   return (
-    <Suspense fallback={
-        <div className="text-center py-5">
-            <div className="spinner-border text-danger" role="status">
-                <span className="visually-hidden">Loading Menu...</span>
-            </div>
-        </div>
-    }>
       <div className="container py-5" id="menu">
       <div className="text-center mb-4">
         <h1 className="fw-bold">Our Menu</h1>
@@ -447,6 +437,23 @@ export default function MenuItem() {
         )}
       </Modal>
     </div>
+  );
+}
+
+export default function MenuItem() {
+  useEffect(() => {
+    require("bootstrap/dist/js/bootstrap.bundle.min.js");
+  }, []);
+
+  return (
+    <Suspense fallback={
+        <div className="text-center py-5">
+            <div className="spinner-border text-danger" role="status">
+                <span className="visually-hidden">Loading Menu...</span>
+            </div>
+        </div>
+    }>
+      <MenuContent />
     </Suspense>
   );
 }
