@@ -11,8 +11,6 @@ export const metadata = {
   title: "Admin • Ayam Bakar Ojolali",
 };
 
-export const rootLayout = true;
-
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
