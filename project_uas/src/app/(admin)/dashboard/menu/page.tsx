@@ -13,7 +13,7 @@ type MenuItemType = {
   image_data_url: string;
 };
 
-const FOODS_BASE_URL = `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/api/foods`;
+const BASE_URL = "http://localhost:3001/api/foods";
 const ITEMS_PER_PAGE = 8;
 
 // Helper to get auth headers (assumes token is in localStorage)
@@ -49,7 +49,7 @@ export default function MenuPage() {
     try {
       append ? setLoadingMore(true) : setLoading(true);
 
-      const res = await fetch(`${FOODS_BASE_URL}?page=${page}&limit=${ITEMS_PER_PAGE}`);
+      const res = await fetch(`${BASE_URL}?page=${page}&limit=${ITEMS_PER_PAGE}`);
       if (!res.ok) throw new Error(`Failed to fetch: ${res.status}`);
 
       const data = await res.json();
@@ -161,8 +161,8 @@ export default function MenuPage() {
 
     try {
       const url = editingItem
-        ? `${FOODS_BASE_URL}/${editingItem.item_id}/update`
-        : `${FOODS_BASE_URL}/add`;
+        ? `${BASE_URL}/${editingItem.item_id}/update`
+        : `${BASE_URL}/add`;
       const method = editingItem ? "PUT" : "POST";
 
       const res = await fetch(url, {
@@ -207,7 +207,7 @@ export default function MenuPage() {
     if (!confirm("Are you sure you want to delete this menu?")) return;
 
     try {
-      const res = await fetch(`${FOODS_BASE_URL}/${id}/delete`, {
+      const res = await fetch(`${BASE_URL}/${id}/delete`, {
         method: "DELETE",
         headers: getAuthHeaders(),
       });

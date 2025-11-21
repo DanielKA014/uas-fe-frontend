@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_BASE_URL;
+const BASE_URL = "http://localhost:3001";
 
 // Helper to get auth headers (assumes token is in localStorage)
 const getAuthHeaders = () => {

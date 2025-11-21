@@ -25,8 +25,6 @@ interface Review {
   created_at: string;
 }
 
-const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_BASE_URL
-
 export default function MenuItem() {
   const searchParams = useSearchParams();
   const categoryParam = searchParams.get('category');
@@ -86,7 +84,7 @@ export default function MenuItem() {
           params.append('category', categoryParam);
         }
 
-        const response = await fetch(`${BASE_URL}/api/foods/?${params.toString()}`);
+        const response = await fetch(`http://localhost:3001/api/foods/?${params.toString()}`);
           
         const data = await response.json();
 
@@ -122,7 +120,7 @@ export default function MenuItem() {
   const fetchReviews = async (foodId: number) => {
     try {
       setLoadingReviews(true);
-      const response = await fetch(`${BASE_URL}/api/foods/${foodId}/reviews`);
+      const response = await fetch(`http://localhost:3001/api/foods/${foodId}/reviews`);
       
       if (!response.ok) {
         throw new Error('Failed to fetch reviews');
@@ -159,7 +157,7 @@ export default function MenuItem() {
     }
 
     try {
-      const response = await fetch(`${BASE_URL}/api/foods/${foodId}/reviews/add`, {
+      const response = await fetch(`http://localhost:3001/api/foods/${foodId}/reviews/add`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

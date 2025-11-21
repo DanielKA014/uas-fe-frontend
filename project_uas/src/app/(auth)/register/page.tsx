@@ -7,8 +7,6 @@ import { Form } from "react-bootstrap";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_BASE_URL
-
 interface RegisterData {
   username: string;
   email: string;
@@ -35,7 +33,7 @@ export default function Register() {
     }
 
     try {
-      const response = await fetch(`${BASE_URL}/api/auth/register`, {
+      const response = await fetch("http://localhost:3001/api/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

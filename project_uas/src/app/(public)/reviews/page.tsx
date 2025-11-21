@@ -6,8 +6,6 @@ import Image from "next/image";
 import "./page.css";
 import Pagination from "../components/pagination";
 
-const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_BASE_URL
-
 export default function ReviewPage() {
   const [selectedRating, setSelectedRating] = useState<number | null>(null);
   const [showModal, setShowModal] = useState(false);
@@ -77,7 +75,7 @@ export default function ReviewPage() {
 
   const getUserById = async (userId: number) => {
     try{
-      const res = await fetch(`${BASE_URL}/api/users/${userId}`);
+      const res = await fetch(`http://localhost:3001/api/users/${userId}`);
       console.log(res);
       if (!res.ok){
         throw new Error(`Failed to get current user ${res.status}`);
@@ -118,7 +116,7 @@ export default function ReviewPage() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`${BASE_URL}/api/restaurant-reviews/?page=${page}&limit=${limit}`);
+      const res = await fetch(`http://localhost:3001/api/restaurant-reviews/?page=${page}&limit=${limit}`);
       if (!res.ok) throw new Error(`Failed to fetch: ${res.status}`);
       const json = await res.json();
       const data = json.reviews;
@@ -183,7 +181,7 @@ export default function ReviewPage() {
     };
 
     try {
-      const res = await fetch(`${BASE_URL}/api/restaurant-reviews/add`, {
+      const res = await fetch('http://localhost:3001/api/restaurant-reviews/add', {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',

@@ -3,8 +3,6 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "../styles.css"
 import { Form } from "react-bootstrap";
 
-const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_BASE_URL
-
 export default function ResetPassword() {
   return (
     <Form id="resetForm">

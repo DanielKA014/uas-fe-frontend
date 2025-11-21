@@ -6,7 +6,6 @@ import { Form } from "react-bootstrap";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_BASE_URL
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -16,7 +15,7 @@ export default function Login() {
   async function handleLogin(e: { preventDefault: () => void; }) {
     e.preventDefault();
     try {
-      const loginRes = await fetch(`${BASE_URL}/api/auth/login`, {
+      const loginRes = await fetch('http://localhost:3001/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
@@ -40,7 +39,7 @@ export default function Login() {
       localStorage.setItem('token', jwtToken);
       // console.log('Token:', jwtToken);
 
-      const user = await fetch(`${BASE_URL}/api/auth/me`, {
+      const user = await fetch('http://localhost:3001/api/auth/me', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
