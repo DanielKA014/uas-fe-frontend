@@ -2,6 +2,8 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
+const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_BASE_URL
+
 export default function AdminGuard({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
@@ -15,7 +17,7 @@ export default function AdminGuard({ children }: { children: React.ReactNode }) 
       }
 
       try {
-        const res = await fetch('http://localhost:3001/api/auth/me', {
+        const res = await fetch(`${BASE_URL}/api/auth/me`, {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${token}`,
