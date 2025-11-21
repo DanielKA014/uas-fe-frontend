@@ -6,6 +6,7 @@ import { FaStar } from "react-icons/fa";
 import { Modal, Button } from "react-bootstrap";
 import "./page.css";
 import Pagination from "../components/pagination";
+import { Suspense } from "react";
 
 interface MenuItem {
   id: number;
@@ -221,7 +222,14 @@ export default function MenuItem() {
   }
 
   return (
-    <div className="container py-5" id="menu">
+    <Suspense fallback={
+        <div className="text-center py-5">
+            <div className="spinner-border text-danger" role="status">
+                <span className="visually-hidden">Loading Menu...</span>
+            </div>
+        </div>
+    }>
+      <div className="container py-5" id="menu">
       <div className="text-center mb-4">
         <h1 className="fw-bold">Our Menu</h1>
         <p className="text-muted">
@@ -439,5 +447,6 @@ export default function MenuItem() {
         )}
       </Modal>
     </div>
+    </Suspense>
   );
 }
