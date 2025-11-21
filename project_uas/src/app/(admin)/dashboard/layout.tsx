@@ -7,8 +7,6 @@ export const runtime = 'edge';
 export const revalidate = 0;
 export const preferredRegion = 'auto';
 
-export const revalidateTag = false;
-
 export const metadata = {
   title: "Admin • Ayam Bakar Ojolali",
 };
