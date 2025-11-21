@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-const BASE_URL = "http://localhost:3001/api/address";
+const BASE_URL = "http://localhost:3001";
 
 // Helper to get auth headers (assumes token is in localStorage)
 const getAuthHeaders = () => {
@@ -29,7 +29,7 @@ export default function AddressPage() {
   // Load data from backend
   const fetchAddresses = async () => {
     try {
-      const res = await fetch(BASE_URL);
+      const res = await fetch(`${BASE_URL}/api/address/`);
       if (!res.ok) throw new Error(`Failed to fetch: ${res.status}`);
       const data = await res.json();
       setAddresses(data);
@@ -76,7 +76,7 @@ export default function AddressPage() {
     };
 
     try {
-      const url = editId === null ? `${BASE_URL}/add` : `${BASE_URL}/${editId}/update`;
+      const url = editId === null ? `${BASE_URL}/api/address/add` : `${BASE_URL}/api/address/${editId}/update`;
       const method = editId === null ? "POST" : "PUT";
       const res = await fetch(url, {
         method,
