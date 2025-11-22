@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Button, Container, Nav, Navbar, Dropdown } from "react-bootstrap";
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../../globals.css";
 
@@ -12,6 +12,7 @@ const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_BASE_URL
 
 export default function NavbarComponent() {
     const pathname = usePathname();
+    const router = useRouter();
     const [user, setUser] = useState<any>(null);
 
     useEffect(() => {
@@ -156,6 +157,12 @@ export default function NavbarComponent() {
                             </Dropdown.Toggle>
 
                             <Dropdown.Menu>
+                                <Dropdown.Item
+                                    onClick={() => router.push('/profile')}
+                                >
+                                    Profile
+                                </Dropdown.Item>
+                                <Dropdown.Divider />
                                 <Dropdown.Item
                                     onClick={handleLogout}
                                     className="text-danger"
