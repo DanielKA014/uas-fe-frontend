@@ -81,7 +81,7 @@ export default function Login() {
         {loading && <LoadingSpinner fullScreen size="lg" />}
         
         {!loading && (
-          <div className="container w-100 w-md-75 w-lg-25 form-container py-4 d-flex flex-column align-items-center">
+          <div className="form-container py-4 d-flex flex-column align-items-center">
             <div className="mb-3 w-100">
               <label htmlFor="emailForm" className="form-label">Email</label>
               <input 
