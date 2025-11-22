@@ -1,27 +1,32 @@
-html, body{
-    overflow-y: hidden;
-    background-color: #eeeeee;
+html,
+body {
+  overflow-y: hidden;
+  background-color: #eeeeee;
 }
 
-.form-container{
-    box-shadow: 0px 0px 20px 4px rgba(41, 41, 41, 0.12);
-    border-radius: 5%;
-    background-color: white;
+.form-container {
+  box-shadow: 0px 0px 20px 4px rgba(41, 41, 41, 0.12);
+  border-radius: 8px;
+  background-color: white;
+  width: 50%;
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 20px;
 }
 
-.parent{
-    min-height: 80vh;
+.parent {
+  min-height: 80vh;
 }
 
-label{
-    font-weight: 600;
+label {
+  font-weight: 600;
 }
 
-hr{
-    height: 2px;
-    width: 80%;
+hr {
+  height: 2px;
+  width: 80%;
 }
 
-.mb-3{
-    width: 80%;
+.mb-3 {
+  width: 80%;
 }
