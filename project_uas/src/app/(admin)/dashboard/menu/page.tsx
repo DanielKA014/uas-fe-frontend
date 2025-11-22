@@ -2,6 +2,9 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
+import LoadingSpinner from "../../../components/LoadingSpinner";
+import Sidebar from "../components/sidebar";
+import AdminTopbarUser from "../components/AdminTopbarUser";
 
 type MenuItemType = {
   item_id: number;
@@ -231,10 +234,14 @@ export default function MenuPage() {
     }
   };
 
-  if (loading) return <div>Loading menus...</div>;
+  if (loading) return <LoadingSpinner fullScreen size="lg" />;
 
   return (
-    <div className="p-4">
+    <>
+      <Sidebar />
+      <main style={{ flex: 1, marginLeft: '180px', position: 'relative', paddingTop: '72px' }}>
+        <AdminTopbarUser />
+        <div className="p-4" style={{ overflowX: 'hidden' }}>
       <h2 className="fw-bold mb-4">Menu Management</h2>
 
       {error && <div className="alert alert-danger">{error}</div>}
@@ -442,6 +449,8 @@ export default function MenuPage() {
           </div>
         </div>
       )}
-    </div>
+        </div>
+      </main>
+    </>
   );
 }

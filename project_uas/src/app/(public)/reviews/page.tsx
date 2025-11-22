@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback } from "react";
 import { Container, Row, Col, Button, Modal, Form } from "react-bootstrap";
 import { FaStar } from "react-icons/fa";
 import Image from "next/image";
+import LoadingSpinner from "@/app/components/LoadingSpinner";
 import "./page.css";
 import Pagination from "../components/pagination";
 
@@ -118,39 +119,49 @@ export default function ReviewPage() {
     setLoading(true);
     setError(null);
     try {
+      // Fetch paginated reviews for display
       const res = await fetch(`${BASE_URL}/api/restaurant-reviews/?page=${page}&limit=${limit}`);
       if (!res.ok) throw new Error(`Failed to fetch: ${res.status}`);
       const json = await res.json();
       const data = json.reviews;
+      
       if (Array.isArray(data)) {
         const reviews = await Promise.all(data.map(mapServerToUI))
         setReviews(reviews);
         setTotalReviews(parseInt(json.count));
-        
-        // Calculate badge counts
-        const counts: { [key: string]: number } = {
-          "rasa-enak": 0,
-          "porsi-pas": 0,
-          "bersih": 0,
-        };
-        
-        data.forEach((review: any) => {
-          if (Array.isArray(review.overviews)) {
-            review.overviews.forEach((badge: string) => {
-              if (counts.hasOwnProperty(badge)) {
-                counts[badge]++;
-              }
-            });
-          }
-        });
-
-        setBadgeCounts(counts);
         
         // Get recent ratings (last 7 or available)
         const recent = data.slice(0, 7).map((r: any) => r.stars);
         setRecentRatings(recent);
       } else {
         setError('Unexpected response from server');
+      }
+      
+      // Fetch ALL reviews to calculate accurate badge counts
+      const allRes = await fetch(`${BASE_URL}/api/restaurant-reviews/?page=1&limit=10000`);
+      if (allRes.ok) {
+        const allJson = await allRes.json();
+        const allData = allJson.reviews;
+        
+        if (Array.isArray(allData)) {
+          const counts: { [key: string]: number } = {
+            "rasa-enak": 0,
+            "porsi-pas": 0,
+            "bersih": 0,
+          };
+          
+          allData.forEach((review: any) => {
+            if (Array.isArray(review.overviews)) {
+              review.overviews.forEach((badge: string) => {
+                if (counts.hasOwnProperty(badge)) {
+                  counts[badge]++;
+                }
+              });
+            }
+          });
+
+          setBadgeCounts(counts);
+        }
       }
     } catch (err: any) {
       setError(err.message || 'Failed to fetch reviews');
@@ -222,8 +233,12 @@ export default function ReviewPage() {
 
   return (
     <Container className="py-5">
-      {/* Average Rating Section */}
-      <Row className="align-items-center mb-4">
+      {loading && <LoadingSpinner fullScreen size="lg" />}
+      
+      {!loading && (
+        <>
+          {/* Average Rating Section */}
+          <Row className="align-items-center mb-4">
         <Col md={6}>
           <h2 className="fw-bold">{averageRating.toFixed(1)}</h2>
           <div className="fs-3 text-warning">
@@ -380,6 +395,8 @@ export default function ReviewPage() {
           </Button>
         </Modal.Footer>
       </Modal>
+        </>
+      )}
     </Container>
   );
 }

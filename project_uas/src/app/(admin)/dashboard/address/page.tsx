@@ -2,6 +2,9 @@
 
 import { useEffect, useState } from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
+import LoadingSpinner from "../../../components/LoadingSpinner";
+import Sidebar from "../components/sidebar";
+import AdminTopbarUser from "../components/AdminTopbarUser";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_BASE_URL;
 
@@ -29,6 +32,7 @@ export default function AddressPage() {
   // Load data from backend
   const fetchAddresses = async () => {
     try {
+      setLoading(true);
       const res = await fetch(`${BASE_URL}/api/address/`);
       if (!res.ok) throw new Error(`Failed to fetch: ${res.status}`);
       const data = await res.json();
@@ -37,8 +41,13 @@ export default function AddressPage() {
     } catch (err) {
       console.error("Failed fetching addresses", err);
       setError("Failed to load addresses. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
+
+  // Add loading state
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchAddresses();
@@ -122,8 +131,14 @@ export default function AddressPage() {
   };
 
   return (
-    <div className="container" style={{ paddingTop: 10 }}>
-      <h3 className="fw-bold mb-4">Control Address</h3>
+    <>
+      <Sidebar />
+      <main style={{ flex: 1, marginLeft: '180px', position: 'relative', paddingTop: '72px' }}>
+        <AdminTopbarUser />
+        <div className="container-fluid" style={{ paddingTop: 10, overflowX: 'hidden' }}>
+          <h3 className="fw-bold mb-4">Control Address</h3>
+
+          {loading && <LoadingSpinner fullScreen size="lg" />}
 
       {/* Error Display */}
       {error && <div className="alert alert-danger">{error}</div>}
@@ -246,6 +261,8 @@ export default function AddressPage() {
           </div>
         </div>
       )}
-    </div>
+        </div>
+      </main>
+    </>
   );
 }

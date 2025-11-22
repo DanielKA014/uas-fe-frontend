@@ -6,6 +6,7 @@ import "../styles.css";
 import { Form } from "react-bootstrap";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import LoadingSpinner from "@/app/components/LoadingSpinner";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_BASE_URL
 
@@ -24,13 +25,18 @@ export default function Register() {
     confirm_password: "",
   });
 
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const router = useRouter();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setError("");
+    setLoading(true);
 
     if (registerId.password !== registerId.confirm_password) {
-      alert("Password and Confirm Password are not Compatible.");
+      setError("Password dan Konfirmasi Password tidak sesuai.");
+      setLoading(false);
       return;
     }
 
@@ -46,7 +52,7 @@ export default function Register() {
       const data = await response.json();
 
       if (response.ok) {
-        alert("Registration Successful!");
+        alert("Pendaftaran berhasil!");
         setRegisterId({
           username: "",
           email: "",
@@ -55,11 +61,13 @@ export default function Register() {
         });
         router.push("/login");
       } else {
-        alert(`Registration Failed: ${data.message}`);
+        setError(`Pendaftaran gagal: ${data.message || 'Silakan coba lagi'}`);
+        setLoading(false);
       }
     } catch (error) {
       console.error("Error Creating User", error);
-      alert("An error occurred while registering. Please try again later.");
+      setError("Terjadi kesalahan saat mendaftar. Silakan coba lagi.");
+      setLoading(false);
     }
   };
 
@@ -74,67 +82,82 @@ export default function Register() {
   return (
     <Form id="registerForm" onSubmit={handleSubmit}>
       <div className="parent container d-flex justify-content-center align-items-center h-100">
-        <div className="container w-25 form-container py-4 d-flex flex-column align-items-center">
-          <div className="mb-3">
-            <label htmlFor="usernameForm" className="form-label">
-              Username
-            </label>
-            <input
-              type="text"
-              className="form-control"
-              id="username"
-              value={registerId.username}
-              onChange={handleChange}
-              required
-            ></input>
+        {loading && <LoadingSpinner fullScreen size="lg" />}
+        
+        {!loading && (
+          <div className="container w-100 w-md-75 w-lg-25 form-container py-4 d-flex flex-column align-items-center">
+            <div className="mb-3 w-100">
+              <label htmlFor="usernameForm" className="form-label">
+                Username
+              </label>
+              <input
+                type="text"
+                className="form-control"
+                id="username"
+                value={registerId.username}
+                onChange={handleChange}
+                required
+                disabled={loading}
+              ></input>
+            </div>
+            <div className="mb-3 w-100">
+              <label htmlFor="emailForm" className="form-label">
+                Email
+              </label>
+              <input
+                type="email"
+                className="form-control"
+                id="email"
+                value={registerId.email}
+                onChange={handleChange}
+                required
+                disabled={loading}
+              ></input>
+            </div>
+            <div className="mb-3 w-100">
+              <label htmlFor="passwordForm" className="form-label">
+                Password
+              </label>
+              <input
+                type="password"
+                className="form-control"
+                id="password"
+                value={registerId.password}
+                onChange={handleChange}
+                required
+                disabled={loading}
+              ></input>
+            </div>
+            <div className="mb-3 w-100">
+              <label htmlFor="confirmPasswordForm" className="form-label">
+                Konfirmasi Password
+              </label>
+              <input
+                type="password"
+                className="form-control"
+                id="confirm_password"
+                value={registerId.confirm_password}
+                onChange={handleChange}
+                required
+                disabled={loading}
+              ></input>
+            </div>
+            
+            {error && (
+              <div className="alert alert-danger w-100" role="alert">
+                {error}
+              </div>
+            )}
+            
+            <div className="mx-auto">
+              <button type="submit" className="btn btn-success" disabled={loading}>
+                {loading ? 'Loading...' : 'Daftar'}
+              </button>
+            </div>
+            <hr></hr>
+            <a href="/login">Kembali ke halaman login</a>
           </div>
-          <div className="mb-3">
-            <label htmlFor="emailForm" className="form-label">
-              Email
-            </label>
-            <input
-              type="email"
-              className="form-control"
-              id="email"
-              value={registerId.email}
-              onChange={handleChange}
-              required
-            ></input>
-          </div>
-          <div className="mb-3">
-            <label htmlFor="passwordForm" className="form-label">
-              Password
-            </label>
-            <input
-              type="password"
-              className="form-control"
-              id="password"
-              value={registerId.password}
-              onChange={handleChange}
-              required
-            ></input>
-          </div>
-          <div className="mb-3">
-            <label htmlFor="confirmPasswordForm" className="form-label">
-              Konfirmasi Password
-            </label>
-            <input
-              type="password"
-              className="form-control"
-              id="confirm_password"
-              value={registerId.confirm_password}
-              onChange={handleChange}
-              required
-            ></input>
-          </div>
-          <div className="mx-auto">
-            <button type="submit" className="btn btn-success">
-              Daftar
-            </button>
-          </div>
-          <hr></hr>
-          <a href="/login">Kembali ke halaman login</a>
-        </div>
+        )}
       </div>
     </Form>
   );

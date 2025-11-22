@@ -4,6 +4,7 @@ import { Container, Row, Col, Form, Button, Alert, Spinner } from "react-bootstr
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import "bootstrap/dist/css/bootstrap.min.css";
+import LoadingSpinner from "@/app/components/LoadingSpinner";
 import "./page.css";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_BASE_URL;
@@ -199,13 +200,7 @@ export default function ProfilePage() {
   };
 
   if (loading) {
-    return (
-      <Container className="py-5 text-center">
-        <Spinner animation="border" role="status">
-          <span className="visually-hidden">Loading...</span>
-        </Spinner>
-      </Container>
-    );
+    return <LoadingSpinner fullScreen size="lg" />;
   }
 
   if (!user) {
