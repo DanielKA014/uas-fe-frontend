@@ -3,6 +3,8 @@ import Image from "next/image";
 import { useState, useEffect, useCallback } from "react"; 
 import { FaStar, FaStarHalfAlt, FaRegStar, FaTimes } from "react-icons/fa";
 import Sidebar from "./components/sidebar";
+import LoadingSpinner from "../../components/LoadingSpinner";
+import AdminTopbarUser from "./components/AdminTopbarUser";
 
 // --- Tipe Data Frontend ---
 type MenuItemType = {
@@ -152,20 +154,24 @@ export default function AdminHome() {
         (review) => reviewStarFilter === 'all' || review.stars === reviewStarFilter
     );
 
-    if (loading) return <div style={{ padding: 20, textAlign: 'center' }}>Loading menu data...</div>;
+    if (loading) return <LoadingSpinner fullScreen size="lg" />;
     if (error) return <div style={{ padding: 20, textAlign: 'center', color: 'red' }}>Error: {error}</div>;
     
     return (
-        <><Sidebar /><main
-
+        <>
+          <Sidebar />
+          <main
             style={{
                 flex: 1,
-                marginLeft: "170px",
-                transition: "margin-left 0.3s ease"
+                marginLeft: "180px",
+                transition: "margin-left 0.3s ease",
+                position: 'relative',
+                paddingTop: '72px'
             }}
             className="p-4"
-        >
-            <div style={{ padding: '20px', background: '#f8f8f8', minHeight: '100vh' }}>
+          >
+            <AdminTopbarUser />
+            <div style={{ padding: '20px', background: '#f8f8f8', minHeight: '100vh', overflowX: 'hidden' }}>
                 {/* ... (Restaurant Overview) ... */}
                 <div
                     style={{
@@ -212,24 +218,26 @@ export default function AdminHome() {
                         justifyContent: "space-between",
                         alignItems: "center",
                         marginBottom: 12,
+                        flexWrap: "wrap",
+                        gap: 12,
                     }}
                 >
-                    <h3 style={{ margin: 0 }}>Menu Ratings ({menuItems.length} items)</h3>
+                    <h3 style={{ margin: 0, minWidth: '150px' }}>Menu Ratings ({menuItems.length} items)</h3>
                     <select
                         value={filter}
                         onChange={(e) => setFilter(e.target.value)}
-                        style={{ padding: 8, borderRadius: 6, border: '1px solid #ccc' }}
+                        style={{ padding: 8, borderRadius: 6, border: '1px solid #ccc', minWidth: '150px' }}
                     >
                         <option value="mostReviews">Most Reviews</option>
                         <option value="highestRated">Highest Rated</option>
                     </select>
                 </div>
 
-                {/* Cards */}
+                {/* Cards - Responsive Grid */}
                 <div
                     style={{
                         display: "grid",
-                        gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
+                        gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))",
                         gap: 16,
                     }}
                 >
@@ -242,8 +250,10 @@ export default function AdminHome() {
                                 padding: 14,
                                 borderRadius: 8,
                                 display: "flex",
-                                gap: 12,
+                                flexDirection: "column",
                                 alignItems: "center",
+                                textAlign: "center",
+                                gap: 12,
                                 boxShadow: "0 6px 18px rgba(0,0,0,0.04)",
                                 cursor: "pointer",
                                 transition: "box-shadow 0.2s",
@@ -253,8 +263,8 @@ export default function AdminHome() {
                         >
                             <div
                                 style={{
-                                    width: 90,
-                                    height: 90,
+                                    width: 80,
+                                    height: 80,
                                     borderRadius: 8,
                                     overflow: "hidden",
                                 }}
@@ -262,19 +272,19 @@ export default function AdminHome() {
                                 <Image
                                     src={item.image_data_url}
                                     alt={item.item_name}
-                                    width={90}
-                                    height={90}
+                                    width={80}
+                                    height={80}
                                     style={{ objectFit: "cover" }} />
                             </div>
-                            <div>
-                                <div style={{ fontWeight: 700 }}>{item.item_name}</div>
-                                <div style={{ display: "flex", alignItems: "center", gap: 4, marginTop: 6 }}>
+                            <div style={{ width: '100%' }}>
+                                <div style={{ fontWeight: 700, fontSize: '14px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.item_name}</div>
+                                <div style={{ display: "flex", alignItems: "center", gap: 4, marginTop: 6, justifyContent: 'center' }}>
                                     {renderStars(item.rating)}
-                                    <span style={{ color: "#6b7280", marginLeft: 6 }}>
+                                    <span style={{ color: "#6b7280", marginLeft: 6, fontSize: '12px' }}>
                                         {item.rating.toFixed(1)}
                                     </span>
                                 </div>
-                                <div style={{ color: "#6b7280", marginTop: 6 }}>
+                                <div style={{ color: "#6b7280", marginTop: 6, fontSize: '12px' }}>
                                     {item.reviews} reviews
                                 </div>
                             </div>
@@ -304,9 +314,9 @@ export default function AdminHome() {
                                 background: "#fff",
                                 padding: 25,
                                 borderRadius: 10,
-                                width: "90%",
+                                width: "95%",
                                 maxWidth: "600px",
-                                maxHeight: "90vh",
+                                maxHeight: "85vh",
                                 overflowY: "auto",
                                 boxShadow: "0 10px 30px rgba(0,0,0,0.2)",
                             }}

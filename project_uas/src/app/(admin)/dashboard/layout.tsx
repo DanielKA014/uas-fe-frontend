@@ -1,5 +1,4 @@
 import React from "react";
-import Sidebar from "./components/sidebar";
 import AdminGuard from "./components/AdminGuard";
 
 export const dynamic = 'force-static';

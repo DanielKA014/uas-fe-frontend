@@ -1,0 +1,34 @@
+/* Loading Spinner Styles */
+
+.loading-spinner-fullscreen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.95);
+  z-index: 9999;
+}
+
+.loading-spinner-inline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  width: 100%;
+  padding: 2rem;
+}
+
+.spinner-border-primary {
+  color: #dc3545 !important;
+}
+
+@media (max-width: 768px) {
+  .loading-spinner-fullscreen {
+    min-height: 100vh;
+  }
+
+  .loading-spinner-inline {
+    min-height: 300px;
+  }
+}

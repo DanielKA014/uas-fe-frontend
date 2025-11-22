@@ -6,6 +6,7 @@ import { FaStar } from "react-icons/fa";
 import { Modal, Button } from "react-bootstrap";
 import "./page.css";
 import Pagination from "../components/pagination";
+import LoadingSpinner from "@/app/components/LoadingSpinner";
 import { Suspense } from "react";
 
 interface MenuItem {
@@ -41,6 +42,7 @@ function MenuContent() {
   const [newComment, setNewComment] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [loadingReviews, setLoadingReviews] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [totalItems, setTotalItems] = useState(0);
   const itemsPerPage = 8;
 
@@ -76,6 +78,7 @@ function MenuContent() {
   useEffect(() => {
     const fetchFoods = async () => {
       try {
+        setLoading(true);
         const params = new URLSearchParams({
           limit: String(itemsPerPage),
           page: String(currentPage),
@@ -103,8 +106,10 @@ function MenuContent() {
         }));
 
         setMenuItems(formatted);
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching foods:", error);
+        setLoading(false);
       }
     };
 
@@ -219,30 +224,34 @@ function MenuContent() {
   }
 
   return (
-      <div className="container py-5" id="menu">
-      <div className="text-center mb-4">
-        <h1 className="fw-bold">Our Menu</h1>
-        <p className="text-muted">
-          Savor the smoky flavor of perfection — from juicy grilled chicken to
-          delicious sides and refreshing drinks.
-        </p>
-      </div>
+      <div className="container-fluid py-5" id="menu">
+      {loading && <LoadingSpinner fullScreen size="lg" />}
 
-      {/* Category */}
-      <div className="d-flex justify-content-center gap-3 mb-5">
-        {["All", "Main Dish", "Beverages", "Vegetables", "Add-on"].map(
-          (categories) => (
-            <button
-              key={categories}
-              className={`btn rounded-pill btn-hover-shadow ${
-                filter === categories
-                  ? "btn-danger text-white"
-                  : "btn-outline-secondary"
-              }`}
-              onClick={() => setFilter(categories)}
-            >
-              {categories}
-            </button>
+      {!loading && (
+        <>
+          <div className="text-center mb-4">
+            <h1 className="fw-bold">Our Menu</h1>
+            <p className="text-muted">
+              Savor the smoky flavor of perfection — from juicy grilled chicken to
+              delicious sides and refreshing drinks.
+            </p>
+          </div>
+
+          {/* Category */}
+          <div className="d-flex justify-content-center gap-3 mb-5 flex-wrap">
+            {["All", "Main Dish", "Beverages", "Vegetables", "Add-on"].map(
+              (categories) => (
+                <button
+                  key={categories}
+                  className={`btn rounded-pill btn-hover-shadow ${
+                    filter === categories
+                      ? "btn-danger text-white"
+                      : "btn-outline-secondary"
+                  }`}
+                  onClick={() => setFilter(categories)}
+                >
+                  {categories}
+                </button>
           )
         )}
       </div>
@@ -436,6 +445,8 @@ function MenuContent() {
           </>
         )}
       </Modal>
+        </>
+      )}
     </div>
   );
 }
@@ -446,13 +457,7 @@ export default function MenuItem() {
   }, []);
 
   return (
-    <Suspense fallback={
-        <div className="text-center py-5">
-            <div className="spinner-border text-danger" role="status">
-                <span className="visually-hidden">Loading Menu...</span>
-            </div>
-        </div>
-    }>
+    <Suspense fallback={<LoadingSpinner fullScreen size="lg" />}>
       <MenuContent />
     </Suspense>
   );

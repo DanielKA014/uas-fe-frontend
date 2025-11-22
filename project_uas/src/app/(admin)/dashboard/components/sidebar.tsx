@@ -9,22 +9,6 @@ export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
 
-  const handleLogout = async () => {
-    try {
-     const res = await fetch(`${BASE_URL}/api/auth/logout`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
-      if (res.ok) {
-        localStorage.removeItem('token');
-        router.push('/login');
-      }
-    } catch (err) {
-      console.error('Logout failed:', err);
-    }
-  };
 
   const navLinks = [
     { href: '/dashboard', label: 'Dashboard' },
@@ -66,12 +50,6 @@ export default function Sidebar() {
           </nav>
 
           <div>
-            <button
-              onClick={handleLogout}
-              className="btn btn-danger w-100 mb-3"
-            >
-              Logout
-            </button>
             <p className="text-muted text-center small mt-3">© 2025 Ayam Bakar Admin</p>
           </div>
         </div>
@@ -116,12 +94,6 @@ export default function Sidebar() {
 
         {/* Footer */}
         <div className="p-3">
-          <button
-            onClick={handleLogout}
-            className="btn btn-danger w-100 mb-3"
-          >
-            Logout
-          </button>
           <p className="text-muted text-center small mb-0">
             © {new Date().getFullYear()} Ayam Bakar Admin
           </p>

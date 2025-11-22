@@ -5,16 +5,22 @@ import "../styles.css"
 import { Form } from "react-bootstrap";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import LoadingSpinner from "@/app/components/LoadingSpinner";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_BASE_URL
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const router = useRouter();
 
   async function handleLogin(e: { preventDefault: () => void; }) {
     e.preventDefault();
+    setLoading(true);
+    setError("");
+    
     try {
       const loginRes = await fetch(`${BASE_URL}/api/auth/login`, {
         method: 'POST',
@@ -23,22 +29,21 @@ export default function Login() {
       });
 
       if (!loginRes.ok) {
-        alert('Email atau password salah!');
+        setError('Email atau password salah!');
+        setLoading(false);
         return;
       }
 
       const loginJson = await loginRes.json();
       const jwtToken = loginJson.token;
 
-      // console.log(loginJson);
-
       if (!jwtToken) {
-        alert('Email atau password salah!');
+        setError('Email atau password salah!');
+        setLoading(false);
         return;
       }
 
       localStorage.setItem('token', jwtToken);
-      // console.log('Token:', jwtToken);
 
       const user = await fetch(`${BASE_URL}/api/auth/me`, {
         method: 'GET',
@@ -49,13 +54,13 @@ export default function Login() {
       });
 
       if (!user.ok) {
-        alert('Gagal mendapatkan user.');
+        setError('Gagal mendapatkan user.');
+        setLoading(false);
         return;
       }
 
       const userData = await user.json();
-      // console.log('Current User', userData);
-      // console.log('User role', userData.role)
+      
       // redirect
       if (userData.role === 'user'){
         router.push('/');
@@ -65,35 +70,57 @@ export default function Login() {
       }
     } catch (err) {
       console.error(err);
-      alert('Terjadi error saat login!');
+      setError('Terjadi error saat login!');
+      setLoading(false);
     }
   }
 
   return (
     <Form id="loginForm" onSubmit={handleLogin}>
       <div className="parent container d-flex justify-content-center align-items-center h-100">
-        <div className="container w-25 form-container py-4 d-flex flex-column align-items-center">
-          <div className="mb-3">
-            <label htmlFor="emailForm" className="form-label">Email</label>
-            <input type="email" className="form-control" id="emailForm" 
-              onChange={(evt) => setEmail(evt.target.value)}
-            ></input>
+        {loading && <LoadingSpinner fullScreen size="lg" />}
+        
+        {!loading && (
+          <div className="container w-100 w-md-75 w-lg-25 form-container py-4 d-flex flex-column align-items-center">
+            <div className="mb-3 w-100">
+              <label htmlFor="emailForm" className="form-label">Email</label>
+              <input 
+                type="email" 
+                className="form-control" 
+                id="emailForm" 
+                onChange={(evt) => setEmail(evt.target.value)}
+                disabled={loading}
+              ></input>
+            </div>
+            <div className="mb-3 w-100">
+              <label htmlFor="passwordForm" className="form-label">Password</label>
+              <input 
+                type="password" 
+                className="form-control" 
+                id="passwordForm" 
+                onChange={(evt) => setPassword(evt.target.value)}
+                disabled={loading}
+              ></input>
+            </div>
+            
+            {error && (
+              <div className="alert alert-danger w-100" role="alert">
+                {error}
+              </div>
+            )}
+            
+            <div className="mx-auto">
+              <button type="submit" className="btn btn-success" disabled={loading}>
+                {loading ? 'Loading...' : 'Login'}
+              </button>
+            </div>  
+            <hr></hr>
+            <div className="d-flex justify-content-start w-100">
+                <a href="/reset">Lupa password?</a> 
+            </div>
+            <span>Belum punya akun? <a href="/register">Daftar disini!</a> </span>
           </div>
-          <div className="mb-3">
-            <label htmlFor="passwordForm" className="form-label">Password</label>
-            <input type="password" className="form-control" id="passwordForm" 
-              onChange={(evt) => setPassword(evt.target.value)}
-            ></input>
-          </div>
-          <div className="mx-auto">
-            <button type="submit" className="btn btn-success">Login</button>
-          </div>  
-          <hr></hr>
-          <div className="d-flex justify-content-start">
-              <a href="/reset">Lupa password?</a> 
-          </div>
-          <span>Belum punya akun? <a href="/register">Daftar disini!</a> </span>
-        </div>
+        )}
       </div>
     </Form>
   );
