@@ -1,13 +1,13 @@
 'use client';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_BASE_URL
 
 export default function Sidebar() {
   const pathname = usePathname();
-  const router = useRouter();
+  
 
 
   const navLinks = [
@@ -100,16 +100,23 @@ export default function Sidebar() {
         </div>
       </aside>
 
-      {/* Mobile Toggle */}
-      <button
-        className="btn btn-light border d-md-none position-fixed top-0 start-0 m-2 shadow-sm"
-        type="button"
-        data-bs-toggle="offcanvas"
-        data-bs-target="#sidebarOffcanvas"
-        aria-controls="sidebarOffcanvas"
-      >
-        <i className="bi bi-list fs-4"></i>
-      </button>
+      {/* Mobile Topbar (shows brand + hamburger) */}
+      <div className="d-md-none position-fixed top-0 start-0 w-100 bg-white shadow-sm" style={{ zIndex: 11, height: 56 }}>
+        <div className="d-flex align-items-center justify-content-between px-3 h-100">
+          <div className="d-flex align-items-center">
+            <span className="fw-semibold">Admin Panel</span>
+          </div>
+          <button
+            className="btn btn-light border"
+            type="button"
+            data-bs-toggle="offcanvas"
+            data-bs-target="#sidebarOffcanvas"
+            aria-controls="sidebarOffcanvas"
+          >
+            <i className="bi bi-list fs-4"></i>
+          </button>
+        </div>
+      </div>
     </>
   );
 }

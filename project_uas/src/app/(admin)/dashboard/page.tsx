@@ -160,18 +160,9 @@ export default function AdminHome() {
     return (
         <>
           <Sidebar />
-          <main
-            style={{
-                flex: 1,
-                marginLeft: "180px",
-                transition: "margin-left 0.3s ease",
-                position: 'relative',
-                paddingTop: '72px'
-            }}
-            className="p-4"
-          >
-            <AdminTopbarUser />
-            <div style={{ padding: '20px', background: '#f8f8f8', minHeight: '100vh', overflowX: 'hidden' }}>
+                    <main className="admin-main p-4">
+                        <AdminTopbarUser />
+                        <div className="admin-content-inner" style={{ padding: '20px', background: '#f8f8f8', minHeight: '100vh', overflowX: 'hidden' }}>
                 {/* ... (Restaurant Overview) ... */}
                 <div
                     style={{

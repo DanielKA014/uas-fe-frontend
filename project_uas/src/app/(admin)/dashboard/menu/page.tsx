@@ -239,9 +239,9 @@ export default function MenuPage() {
   return (
     <>
       <Sidebar />
-      <main style={{ flex: 1, marginLeft: '180px', position: 'relative', paddingTop: '72px' }}>
+      <main className="admin-main">
         <AdminTopbarUser />
-        <div className="p-4" style={{ overflowX: 'hidden' }}>
+        <div className="admin-content-inner p-4" style={{ overflowX: 'hidden' }}>
       <h2 className="fw-bold mb-4">Menu Management</h2>
 
       {error && <div className="alert alert-danger">{error}</div>}
