@@ -24,14 +24,22 @@ pool.on('error', (err, client) => {
     process.exit(-1)
 })
 
-pool.connect( (err, connection) => {
-    pool.query("SELECT VERSION()", [], function (err, result) {
-        if (err) throw err;
-
-        console.log(result.rows[0]);
+pool.connect((err, client, release) => {
+    if (err) {
+        console.error('Error connecting to database:', err);
+        return;
+    }
+    
+    client.query("SELECT VERSION()", [], function (err, result) {
+        release();
+        
+        if (err) {
+            console.error('Error executing query:', err);
+        } else {
+            console.log('Database Version:', result.rows[0]);
+            console.log('Connected to the PostgreSQL Database.');
+        }
     });
-    console.log('Connected to the PostgreSQL Database.');
-    connection.release();
 }); 
 
 module.exports = pool;
