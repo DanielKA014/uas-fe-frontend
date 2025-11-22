@@ -133,9 +133,9 @@ export default function AddressPage() {
   return (
     <>
       <Sidebar />
-      <main style={{ flex: 1, marginLeft: '180px', position: 'relative', paddingTop: '72px' }}>
+      <main className="admin-main">
         <AdminTopbarUser />
-        <div className="container-fluid" style={{ paddingTop: 10, overflowX: 'hidden' }}>
+        <div className="admin-content-inner container-fluid" style={{ paddingTop: 10, overflowX: 'hidden' }}>
           <h3 className="fw-bold mb-4">Control Address</h3>
 
           {loading && <LoadingSpinner fullScreen size="lg" />}
