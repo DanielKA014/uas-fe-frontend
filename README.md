@@ -1,5 +1,5 @@
 ## Website Link
-cek deployment ini : https://uas-fe-frontend-q92wbhojh-danielka014s-projects.vercel.app
+cek deployment ini : https://uas-fe-frontend.vercel.app
 
 ## Setup Project di Local
 
