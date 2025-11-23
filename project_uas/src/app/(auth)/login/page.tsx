@@ -115,9 +115,9 @@ export default function Login() {
             </div>  
             <hr></hr>
             <div className="d-flex justify-content-center w-100">
-                <a href="/reset">Lupa password?</a> 
+              <a href="/reset" className="text-primary">Lupa password?</a>
             </div>
-            <span>Belum punya akun? <a href="/register">Daftar disini!</a> </span>
+            <span>Belum punya akun? <a href="/register" className="text-primary">Daftar disini!</a> </span>
           </div>
         )}
       </div>

@@ -132,7 +132,7 @@ export default function ResetPassword() {
               </button>
             </div>
             <hr></hr>
-            <a href="/login">Kembali ke halaman login</a>
+            <a href="/login" className="text-primary">Kembali ke halaman login</a>
           </div>
         )}
       </div>
