@@ -66,14 +66,14 @@ export default function AdminHome() {
 
     const fetchRestaurantRating = useCallback(async () => {
         try {
-            const res = await fetch(`${RESTAURANT_BASE_URL}/rating-summary`); 
+            const res = await fetch(`${RESTAURANT_BASE_URL}/?page=1&limit=1`); 
             if (!res.ok) throw new Error("Failed to fetch restaurant rating.");
 
             const data = await res.json();
             
             setRestaurantRating({
-                average: parseFloat(data.average_rating) || 0,
-                totalReviews: parseInt(data.total_reviews) || 0,
+                average: parseFloat(data.average_stars),
+                totalReviews: parseInt(data.count) || 0,
             });
         } catch (err) {
             console.error("Error fetching restaurant rating:", err);

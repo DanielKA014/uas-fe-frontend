@@ -69,8 +69,7 @@ export default function Login() {
         router.push('/dashboard')
       }
     } catch (err) {
-      console.error(err);
-      setError('Terjadi error saat login!');
+      setError(`Terjadi error saat login! ${err}`);
       setLoading(false);
     }
   }

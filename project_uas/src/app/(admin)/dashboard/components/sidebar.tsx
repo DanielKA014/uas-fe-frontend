@@ -101,7 +101,7 @@ export default function Sidebar() {
       </aside>
 
       {/* Mobile Topbar (shows brand + hamburger) */}
-      <div className="d-md-none position-fixed top-0 start-0 w-100 bg-white shadow-sm" style={{ zIndex: 11, height: 56 }}>
+      <div className="d-md-none position-fixed top-0 start-0 left-0 w-100 bg-white shadow-sm" style={{ zIndex: 11, height: 56 }}>
         <div className="d-flex align-items-center justify-content-between px-3 h-100">
           <div className="d-flex align-items-center">
             <span className="fw-semibold">Admin Panel</span>

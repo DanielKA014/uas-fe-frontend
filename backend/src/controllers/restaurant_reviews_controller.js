@@ -11,10 +11,15 @@ exports.getRestaurantReviews = async (req, res, next) =>{
         if (!reviews){
             return res.status(500).json({message: "Failed to fetch food reviews"})
         } else{
+            // count total review restoran dan rata2 bintang (bukan review makanan)
             const count = await reviewModel.countReviews();
             const countNumber = parseInt(count)
+            const average  = await reviewModel.countAverageRating();
+            const averageNumber = parseFloat(average);
+            // console.log('this is my average rating', averageNumber)
             return res.status(200).json({
                 count: countNumber,
+                average_stars: averageNumber,
                 reviews
             })
         }
