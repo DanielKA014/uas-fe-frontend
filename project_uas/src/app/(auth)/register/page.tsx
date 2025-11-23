@@ -81,7 +81,7 @@ export default function Register() {
 
   return (
     <Form id="registerForm" onSubmit={handleSubmit}>
-      <div className="parent container d-flex justify-content-center align-items-center h-100" style={{ marginTop: 64 }}>
+      <div className="parent container d-flex justify-content-center align-items-center h-100" style={{ marginTop: 74 }}>
         {loading && <LoadingSpinner fullScreen size="lg" />}
         
         {!loading && (
@@ -155,7 +155,7 @@ export default function Register() {
               </button>
             </div>
             <hr></hr>
-            <a href="/login">Kembali ke halaman login</a>
+            <a href="/login" className="text-primary">Kembali ke halaman login</a>
           </div>
         )}
       </div>
