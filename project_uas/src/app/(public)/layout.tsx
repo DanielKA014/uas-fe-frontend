@@ -22,9 +22,9 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} ${styles.main}`}
       >
           <main className="m-0 p-0">
-          <NavbarComponent />
-          {children}
-          <Footer />
+            <NavbarComponent />
+              {children}
+            <Footer />
           </main>
       </body>
     </html>
