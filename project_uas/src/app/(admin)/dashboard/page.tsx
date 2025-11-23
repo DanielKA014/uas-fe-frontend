@@ -22,6 +22,8 @@ type FoodReview = {
   stars: number;
   comment: string;
   user_id: number;
+  created_at?: string;
+  createdAt?: string;
 };
 
 type RestaurantRating = {
@@ -440,6 +442,17 @@ export default function AdminHome() {
                                                 <span style={{ fontWeight: 'bold' }}>User: {review.comment_id}</span>
                                             </div>
                                             <p style={{ margin: 0 }}>{review.comment}</p>
+                                            {(review.created_at || review.createdAt) && (
+                                                <small style={{ color: '#999', display: 'block', marginTop: 8 }}>
+                                                  {new Date(review.created_at || review.createdAt || '').toLocaleDateString('id-ID', {
+                                                    year: 'numeric',
+                                                    month: 'long',
+                                                    day: 'numeric',
+                                                    hour: '2-digit',
+                                                    minute: '2-digit',
+                                                  })}
+                                                </small>
+                                            )}
                                         </div>
                                     ))}
                                 </div>
@@ -505,6 +518,17 @@ export default function AdminHome() {
                                             <p style={{ margin: '8px 0', fontStyle: 'italic', color: '#666' }}>
                                                 "{review.comment}"
                                             </p>
+                                            {(review.created_at || review.createdAt) && (
+                                                <small style={{ color: '#999', display: 'block', marginTop: 8 }}>
+                                                    {new Date(review.created_at || review.createdAt || '').toLocaleDateString('id-ID', {
+                                                        year: 'numeric',
+                                                        month: 'long',
+                                                        day: 'numeric',
+                                                        hour: '2-digit',
+                                                        minute: '2-digit',
+                                                    })}
+                                                </small>
+                                            )}
                                         </div>
                                     ))}
                                 </div>
