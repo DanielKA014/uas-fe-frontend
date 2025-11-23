@@ -5,6 +5,7 @@ import { FaStar, FaStarHalfAlt, FaRegStar, FaTimes } from "react-icons/fa";
 import Sidebar from "./components/sidebar";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import AdminTopbarUser from "./components/AdminTopbarUser";
+import LoadMorePagination from "./components/LoadMorePagination";
 
 // --- Tipe Data Frontend ---
 type MenuItemType = {
@@ -20,7 +21,7 @@ type FoodReview = {
   comment_id: number;
   stars: number;
   comment: string;
-  // Tambahkan user_id atau username jika tersedia di skema DB
+  user_id: number;
 };
 
 type RestaurantRating = {
@@ -33,6 +34,7 @@ declare const Buffer: any;
 const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_BASE_URL
 const FOODS_BASE_URL = `${BASE_URL}/api/foods`;
 const RESTAURANT_BASE_URL = `${BASE_URL}/api/restaurant-reviews`;
+const ITEMS_PER_PAGE = 6;
 
 export default function AdminHome() {
     // ... (State declarations remain the same) ...
@@ -47,6 +49,17 @@ export default function AdminHome() {
     const [currentReviews, setCurrentReviews] = useState<FoodReview[]>([]);
     const [reviewLoading, setReviewLoading] = useState(false);
     const [reviewStarFilter, setReviewStarFilter] = useState<number | 'all'>('all');
+
+    // pagination purpose
+    const [currentPage, setCurrentPage] = useState(1);
+    const [loadingMore, setLoadingMore] = useState(false);
+    const [hasMore, setHasMore] = useState(true);
+
+    const loadNextPage = () => {
+        const nextPage = currentPage + 1;
+        setCurrentPage(nextPage);
+        fetchAllMenusWithRatings(nextPage, true);
+    };
 
     const fetchMenuReviews = useCallback(async (itemId: number) => {
         setReviewLoading(true);
@@ -80,42 +93,72 @@ export default function AdminHome() {
         }
     }, []);
 
-
-    const fetchAllMenusWithRatings = useCallback(async () => {
+    const fetchAllMenusWithRatings = useCallback(async (page: number, append: boolean = false) => {  
         setLoading(true);
         setError(null);
         try {
-            const res = await fetch(`${FOODS_BASE_URL}?limit=100`);
-            if (!res.ok) throw new Error(`Failed to fetch menus: ${res.status}`);
+            append ? setLoadingMore(true) : setLoading(true);
 
-            const data = await res.json();
-            const fetchedMenus = data.result || [];
+            const menuRes = await fetch(`${FOODS_BASE_URL}/?page=${page}&limit=${ITEMS_PER_PAGE}`);
+            if (!menuRes.ok) throw new Error(`Failed to fetch menus: ${menuRes.status}`);
 
-            const menusWithActualRatings: MenuItemType[] = fetchedMenus.map((menu: any) => {
+            const menuData = await menuRes.json();
+            const fetchedMenus = menuData.result || [];
+
+            const ratingPromises = fetchedMenus.map(async (menu: any) => {
                 // Backend already converts image_bytes to base64 and returns image_data_url
-                let image_data_url = menu.image_data_url || '/images/makanan/default.jpg';
-
+                let imageDataUrl = menu.image_data_url || '/images/makanan/default.jpg';
+                const itemId = menu.item_id
+                try {
+                    const reviewRes = await fetch(`${FOODS_BASE_URL}/${itemId}/reviews-overview`);
+                    if (reviewRes.ok) {
+                        const reviewSummary = await reviewRes.json();
+                        
+                        console.log(`Ini isi field item menu dengan id ${itemId}`)
+                        console.log(reviewSummary.average_rating)
+                        console.log(reviewSummary.review_count);
+                        
+                        return {
+                            item_id: itemId,
+                            item_name: menu.item_name,
+                            category: menu.category,
+                            image_data_url: imageDataUrl, 
+                            rating: parseFloat(reviewSummary.average_rating) || 0, 
+                            reviews: parseInt(reviewSummary.review_count) || 0,
+                        };
+                    }
+                
+                } catch (fetchError) {
+                    console.warn(`Could not fetch rating for item ${itemId}. Using default.`, fetchError);
+                }
                 return {
-                    item_id: menu.item_id,
+                    item_id: itemId,
                     item_name: menu.item_name,
                     category: menu.category,
-                    image_data_url: image_data_url,
-                    rating: parseFloat(menu.average_rating) || 0, 
-                    reviews: parseInt(menu.review_count) || 0,
-                }
+                    image_data_url: imageDataUrl,
+
+                    rating: 0, 
+                    reviews: 0,
+                };
             });
 
-            setMenuItems(menusWithActualRatings);
+            const menusWithActualRatings: MenuItemType[] = await Promise.all(ratingPromises);
+            
+            append ? setMenuItems((prev) => [...prev, ...menusWithActualRatings]) : setMenuItems(menusWithActualRatings);
+
+            setHasMore(menusWithActualRatings.length === ITEMS_PER_PAGE);
+            setError(null);
         } catch (err: any) {
             console.error("Error fetching menus:", err);
             setError("Failed to load menus or ratings.");
         } finally {
             setLoading(false);
+            setLoadingMore(false);
         }
     }, []);
 
     useEffect(() => {
-        fetchAllMenusWithRatings();
+        fetchAllMenusWithRatings(1, false);
         fetchRestaurantRating();
     }, [fetchAllMenusWithRatings, fetchRestaurantRating]); 
 
@@ -184,7 +227,7 @@ export default function AdminHome() {
                     >
                         <div>
                             <div style={{ fontSize: 40, color: "#d97706", fontWeight: 700 }}>
-                                {restaurantRating.average.toFixed(1)}
+                                {restaurantRating.average}
                             </div>
                             <div style={{ display: "flex", gap: 2 }}>{renderStars(restaurantRating.average)}</div>
                             <div style={{ color: "#6b7280", marginTop: 6 }}>
@@ -272,7 +315,7 @@ export default function AdminHome() {
                                 <div style={{ display: "flex", alignItems: "center", gap: 4, marginTop: 6, justifyContent: 'center' }}>
                                     {renderStars(item.rating)}
                                     <span style={{ color: "#6b7280", marginLeft: 6, fontSize: '12px' }}>
-                                        {item.rating.toFixed(1)}
+                                        {item.rating}
                                     </span>
                                 </div>
                                 <div style={{ color: "#6b7280", marginTop: 6, fontSize: '12px' }}>
@@ -282,6 +325,12 @@ export default function AdminHome() {
                         </div>
                     ))}
                 </div>
+
+                {hasMore && (
+                <LoadMorePagination 
+                    nextPage={loadNextPage} isLoadingMore={loadingMore}            
+                ></LoadMorePagination>
+                )}
 
                 {/* Review Modal */}
                 {showReviewModal && selectedMenuItem && (

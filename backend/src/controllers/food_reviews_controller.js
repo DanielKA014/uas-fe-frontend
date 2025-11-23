@@ -19,6 +19,27 @@ exports.getFoodReviews = async (req, res, next) =>{
     }  
 }
 
+exports.getFoodReviewsOverview = async (req, res, next) => {
+    try{
+        const foodId = req.params.id;
+
+        const overview = await reviewModel.getFoodReviewsOverview(foodId)
+
+         if (!overview){
+            return res.status(500).json({message: "Failed to fetch food reviews overview!"})
+        } else{
+            const averageRating = parseFloat(overview.average_stars)
+            const ratingCount = parseInt(overview.total_reviews)
+            return res.status(200).json({
+                average_rating: averageRating,
+                review_count: ratingCount
+            })
+        }
+    } catch (err) {
+        return next(err)
+    }
+}
+
 exports.addFoodReview = async (req, res, next) => {
     try{
         const validationError = validationResult(req);
