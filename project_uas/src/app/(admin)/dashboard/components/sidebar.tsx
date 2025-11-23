@@ -1,17 +1,14 @@
 'use client';
-import { useEffect } from 'react';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import { Suspense, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_BASE_URL
 
-export default function Sidebar() {
+function SidebarContent() {
   const pathname = usePathname();
   
-
-
   useEffect(() => {
     const sidebarWidth = 180; // px
     const topbarHeight = 64; // px (match main navbar)
@@ -154,5 +151,19 @@ export default function Sidebar() {
         </div>
       </div>
     </>
+  );
+}
+
+export default function SidebarItem() {
+  useEffect(() => {
+    require("bootstrap/dist/js/bootstrap.bundle.min.js");
+  }, []);
+
+  return (
+    <div style={{ paddingTop: 64 }}>
+      <Suspense fallback={null}>
+        <SidebarContent />
+      </Suspense>
+    </div>
   );
 }
