@@ -36,7 +36,7 @@ pool.connect((err, client, release) => {
         if (err) {
             console.error('Error executing query:', err);
         } else {
-            console.log('Database Version:', result.rows[0]);
+            console.log('Database Version:', result.rows[0].version);
             console.log('Connected to the PostgreSQL Database.');
         }
     });
