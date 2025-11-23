@@ -75,7 +75,7 @@ export default function ResetPassword() {
 
   return (
     <Form id="resetForm" onSubmit={handleSubmit}>
-      <div className="parent container d-flex justify-content-center align-items-center h-100" style={{ paddingTop: 64 }}>
+      <div className="parent container d-flex justify-content-center align-items-center h-100" style={{ marginTop: 64 }}>
         {loading && <LoadingSpinner fullScreen size="lg" />}
         
         {!loading && (
