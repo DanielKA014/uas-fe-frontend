@@ -1,4 +1,5 @@
 'use client';
+import { useEffect } from 'react';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -10,6 +11,35 @@ export default function Sidebar() {
   const pathname = usePathname();
   
 
+
+  useEffect(() => {
+    const sidebarWidth = 180; // px
+    const topbarHeight = 64; // px (match main navbar)
+    const desktopBreakpoint = 768; // md
+
+    const prevPaddingLeft = document.body.style.paddingLeft || '';
+    const prevPaddingTop = document.body.style.paddingTop || '';
+
+    function applyLayout() {
+      if (window.innerWidth >= desktopBreakpoint) {
+        // Desktop: make room for fixed sidebar
+        document.body.style.paddingLeft = sidebarWidth + 'px';
+        document.body.style.paddingTop = '';
+      } else {
+        // Mobile: make room for mobile topbar
+        document.body.style.paddingLeft = prevPaddingLeft;
+        document.body.style.paddingTop = topbarHeight + 'px';
+      }
+    }
+
+    applyLayout();
+    window.addEventListener('resize', applyLayout);
+    return () => {
+      window.removeEventListener('resize', applyLayout);
+      document.body.style.paddingLeft = prevPaddingLeft;
+      document.body.style.paddingTop = prevPaddingTop;
+    };
+  }, []);
 
   const navLinks = [
     { href: '/dashboard', label: 'Dashboard' },
@@ -25,7 +55,7 @@ export default function Sidebar() {
         tabIndex={-1}
         id="sidebarOffcanvas"
         aria-labelledby="sidebarOffcanvasLabel"
-        style={{ top: 56, height: 'calc(100% - 56px)', zIndex: 1060 }}
+        style={{ top: 64, height: 'calc(100% - 64px)', zIndex: 1060 }}
       >
         <div className="offcanvas-header border-bottom">
           <h5 className="fw-semibold">Admin Panel</h5>
@@ -63,8 +93,7 @@ export default function Sidebar() {
         style={{
           width: '180px',
           zIndex: 10,
-          borderRight: '1px solid #eee',
-          marginRight: '66px',
+          borderRight: '1px solid #eee'
         }}
       >
         {/* Header */}
@@ -106,7 +135,7 @@ export default function Sidebar() {
       {/* Mobile Topbar (shows brand + hamburger) */}
       <div
         className="d-md-none position-fixed top-0 start-0 left-0 w-100 bg-white shadow-sm"
-        style={{ zIndex: 1100, height: 56 }}
+        style={{ zIndex: 1100, height: 64 }}
       >
         <div className="d-flex align-items-center justify-content-between px-3 h-100">
           <div className="d-flex align-items-center">
