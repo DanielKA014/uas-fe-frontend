@@ -139,7 +139,7 @@ export default function NavbarComponent() {
                     {/* Jika user BELUM login maka bakal tampilkan tombol Login */}
                     {!user && (
                         <Link href="/login">
-                            <Button variant="outline-success" className="ms-lg-3 px-4">
+                            <Button variant="outline-success" className="ms-lg-3 px-4" style={{ width: '100%' }}>
                                 Login
                             </Button>
                         </Link>
