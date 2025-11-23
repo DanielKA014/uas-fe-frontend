@@ -5,6 +5,7 @@ import Image from "next/image";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import Sidebar from "../components/sidebar";
 import AdminTopbarUser from "../components/AdminTopbarUser";
+import LoadMorePagination from "../components/LoadMorePagination";
 
 type MenuItemType = {
   item_id: number;
@@ -31,12 +32,14 @@ const getAuthHeaders = () => {
 export default function MenuPage() {
   const [menus, setMenus] = useState<MenuItemType[]>([]);
   const [loading, setLoading] = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editingItem, setEditingItem] = useState<MenuItemType | null>(null);
+  
+  // pagination purpose
+  const [hasMore, setHasMore] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const [form, setForm] = useState({
     item_name: "",
@@ -296,15 +299,9 @@ export default function MenuPage() {
       </div>
 
       {hasMore && (
-        <div className="text-center mt-4">
-          <button
-            className="btn btn-outline-primary"
-            onClick={loadNextPage}
-            disabled={loadingMore}
-          >
-            {loadingMore ? "Loading..." : "Next Page"}
-          </button>
-        </div>
+        <LoadMorePagination 
+          nextPage={loadNextPage} isLoadingMore={loadingMore}            
+        ></LoadMorePagination>
       )}
 
       {showModal && (

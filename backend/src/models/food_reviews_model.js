@@ -22,7 +22,22 @@ exports.addFoodReview = async (stars, comment, foodId) => {
         const res = await pool.query(sqlQuery, values)
         return res.rows[0];
     } catch (err){
-        console.log(err)
+        // console.log(err)
         throw new Error('Failed to add food review', err)
+    }
+}
+
+exports.getFoodReviewsOverview = async (foodId) => {
+    try {
+        const sqlQuery = `SELECT
+                            COUNT(comment_id) AS total_reviews,
+                            (AVG(COALESCE(stars)))::numeric(2,1) AS average_stars
+                            FROM food_reviews
+                            WHERE food_id = $1`
+        const res = await pool.query(sqlQuery, [foodId])
+        return res.rows[0]
+    } catch (err) {
+        console.log(err)
+        throw new Error('Failed to get food reviews overview'. err)
     }
 }

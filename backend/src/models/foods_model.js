@@ -116,7 +116,7 @@ exports.updateFood = async (foodId, updates) => {
 
 exports.countFoods = async () => {
     try{
-        const sqlQuery = 'SELECT COUNT(*) FROM foods'
+        const sqlQuery = 'SELECT COUNT(item_id) FROM foods'
         const res = await pool.query(sqlQuery);
         return res.rows[0].count
     } catch (err){
@@ -126,7 +126,7 @@ exports.countFoods = async () => {
 
 exports.countByCategory = async (category) => {
     try{
-        const sqlQuery = 'SELECT COUNT(*) FROM foods WHERE category = $1'
+        const sqlQuery = 'SELECT COUNT(item_id) FROM foods WHERE category = $1'
         const res = await pool.query(sqlQuery, [category]);
         return res.rows[0].count
     } catch (err) {
