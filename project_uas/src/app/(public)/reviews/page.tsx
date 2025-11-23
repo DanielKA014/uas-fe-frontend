@@ -25,6 +25,7 @@ export default function ReviewPage() {
     rating: number;
     text: string;
     badges: string[];
+    createdAt?: string;
   };
 
   const [reviews, setReviews] = useState<ReviewUI[]>([]);
@@ -113,6 +114,7 @@ export default function ReviewPage() {
       rating: row.stars ?? 0,
       text: row.comment ?? "",
       badges: row.overviews ? overviewsArr : [],
+      createdAt: row.created_at || row.createdAt,
     };
   };
 
@@ -324,6 +326,17 @@ export default function ReviewPage() {
               </span>
             ))}
           </div>
+          {review.createdAt && (
+            <small className="text-muted d-block mt-2">
+              {new Date(review.createdAt).toLocaleDateString('id-ID', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+              })}
+            </small>
+          )}
         </div>
       ))}
 

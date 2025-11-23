@@ -142,13 +142,14 @@ export default function Sidebar() {
             <span className="fw-semibold">Admin Panel</span>
           </div>
           <button
-            className="btn btn-light border"
+            className="btn btn-light border-0"
             type="button"
             data-bs-toggle="offcanvas"
             data-bs-target="#sidebarOffcanvas"
             aria-controls="sidebarOffcanvas"
+            style={{ padding: '0.5rem 0.75rem' }}
           >
-            <i className="bi bi-list fs-4"></i>
+            <i className="bi bi-list fs-5"></i>
           </button>
         </div>
       </div>

@@ -10,6 +10,7 @@ const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_BASE_URL;
 
 export default function AdminTopbarUser() {
   const [user, setUser] = useState<any>(null);
+  const [topPosition, setTopPosition] = useState(12); // default desktop
   const router = useRouter();
 
   useEffect(() => {
@@ -44,6 +45,22 @@ export default function AdminTopbarUser() {
     fetchUser();
   }, []);
 
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 768) {
+        // Mobile: position below the 64px topbar
+        setTopPosition(72);
+      } else {
+        // Desktop: position at top
+        setTopPosition(12);
+      }
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const handleLogout = async () => {
     const token = localStorage.getItem("token");
     try {
@@ -62,7 +79,7 @@ export default function AdminTopbarUser() {
   };
 
   return (
-    <div style={{ position: 'absolute', top: 12, right: 20, zIndex: 20 }}>
+    <div style={{ position: 'absolute', top: topPosition, right: 20, zIndex: 20 }}>
       {!user && null}
       {user && (
         <Dropdown align="end">
