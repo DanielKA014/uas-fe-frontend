@@ -14,7 +14,7 @@ export default function Home() {
     router.push(`/menu?category=${encodeURIComponent(category)}`);
   };
   return (
-    <main id="home">
+    <main id="home" style={{ paddingTop: 64 }}>
       {/* Hero section */}
       <section className="position-relative text-center text-dark">
         <Image

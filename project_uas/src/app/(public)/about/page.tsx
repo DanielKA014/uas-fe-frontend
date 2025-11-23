@@ -7,7 +7,7 @@ import "./page.css";
 
 const page = () => {
   return (
-    <Container className="py-5 px-3">
+    <Container className="py-5 px-3 page-offset">
       <Row className="align-items-center text-md-start text-center g-4">
 
         {/* Left side: Image */}

@@ -457,8 +457,10 @@ export default function MenuItem() {
   }, []);
 
   return (
-    <Suspense fallback={<LoadingSpinner fullScreen size="lg" />}>
-      <MenuContent />
-    </Suspense>
+    <div style={{ paddingTop: 64 }}>
+      <Suspense fallback={<LoadingSpinner fullScreen size="lg" />}>
+        <MenuContent />
+      </Suspense>
+    </div>
   );
 }

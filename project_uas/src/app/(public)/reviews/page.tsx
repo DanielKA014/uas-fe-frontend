@@ -6,6 +6,7 @@ import Image from "next/image";
 import LoadingSpinner from "@/app/components/LoadingSpinner";
 import "./page.css";
 import Pagination from "../components/pagination";
+import "../../globals.css";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_BASE_URL
 
@@ -232,7 +233,7 @@ export default function ReviewPage() {
   const totalPages = Math.ceil(totalReviews / reviewsPerPage)
 
   return (
-    <Container className="py-5">
+    <Container className="py-5 page-offset">
       {loading && <LoadingSpinner fullScreen size="lg" />}
       
       {!loading && (

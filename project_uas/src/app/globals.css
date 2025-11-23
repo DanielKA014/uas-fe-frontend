@@ -91,3 +91,7 @@ body::-webkit-scrollbar-thumb,
     padding-top: 72px;
   }
 }
+
+.page-offset {
+  margin-top: 64px !important;
+}
