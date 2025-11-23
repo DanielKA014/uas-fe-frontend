@@ -34,7 +34,7 @@ declare const Buffer: any;
 const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_BASE_URL
 const FOODS_BASE_URL = `${BASE_URL}/api/foods`;
 const RESTAURANT_BASE_URL = `${BASE_URL}/api/restaurant-reviews`;
-const ITEMS_PER_PAGE = 6;
+const ITEMS_PER_PAGE = 8;
 
 export default function AdminHome() {
     // ... (State declarations remain the same) ...
@@ -49,6 +49,11 @@ export default function AdminHome() {
     const [currentReviews, setCurrentReviews] = useState<FoodReview[]>([]);
     const [reviewLoading, setReviewLoading] = useState(false);
     const [reviewStarFilter, setReviewStarFilter] = useState<number | 'all'>('all');
+
+    // Restaurant reviews popup
+    const [showRestaurantReviewsModal, setShowRestaurantReviewsModal] = useState(false);
+    const [restaurantReviews, setRestaurantReviews] = useState<any[]>([]);
+    const [restaurantReviewsLoading, setRestaurantReviewsLoading] = useState(false);
 
     // pagination purpose
     const [currentPage, setCurrentPage] = useState(1);
@@ -182,6 +187,32 @@ export default function AdminHome() {
         setReviewStarFilter('all');
     };
 
+    const fetchRestaurantReviews = useCallback(async () => {
+        setRestaurantReviewsLoading(true);
+        try {
+            const res = await fetch(`${RESTAURANT_BASE_URL}/?page=1&limit=1000`);
+            if (!res.ok) throw new Error(`Failed to fetch restaurant reviews: ${res.status}`);
+
+            const data = await res.json();
+            setRestaurantReviews(data.reviews || []);
+        } catch (err) {
+            console.error("Error fetching restaurant reviews:", err);
+            setRestaurantReviews([]);
+        } finally {
+            setRestaurantReviewsLoading(false);
+        }
+    }, []);
+
+    const handleOpenRestaurantReviewsModal = async () => {
+        setShowRestaurantReviewsModal(true);
+        await fetchRestaurantReviews();
+    };
+
+    const handleCloseRestaurantReviewsModal = () => {
+        setShowRestaurantReviewsModal(false);
+        setRestaurantReviews([]);
+    };
+
     const renderStars = (rating: number) => {
         const validRating = (rating && isFinite(rating)) ? rating : 0; 
         const stars = [];
@@ -225,13 +256,16 @@ export default function AdminHome() {
                             marginTop: 12,
                         }}
                     >
-                        <div>
+                        <div style={{ cursor: 'pointer' }} onClick={handleOpenRestaurantReviewsModal}>
                             <div style={{ fontSize: 40, color: "#d97706", fontWeight: 700 }}>
-                                {restaurantRating.average}
+                                {restaurantRating.average.toFixed(1)}
                             </div>
                             <div style={{ display: "flex", gap: 2 }}>{renderStars(restaurantRating.average)}</div>
                             <div style={{ color: "#6b7280", marginTop: 6 }}>
                                 {restaurantRating.totalReviews} reviews
+                            </div>
+                            <div style={{ color: "#3b82f6", fontSize: 12, marginTop: 8 }}>
+                                (Click to see recent comments)
                             </div>
                         </div>
                         <div>
@@ -411,6 +445,71 @@ export default function AdminHome() {
                                 </div>
                             ) : (
                                 <p style={{ textAlign: 'center', color: '#666' }}>No reviews match the current filter.</p>
+                            )}
+                        </div>
+                    </div>
+                )}
+
+                {/* Restaurant Reviews Modal */}
+                {showRestaurantReviewsModal && (
+                    <div
+                        style={{
+                            position: "fixed",
+                            top: 0,
+                            left: 0,
+                            width: "100%",
+                            height: "100%",
+                            background: "rgba(0, 0, 0, 0.5)",
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            zIndex: 1000,
+                        }}
+                        onClick={handleCloseRestaurantReviewsModal}
+                    >
+                        <div
+                            style={{
+                                background: "#fff",
+                                padding: 25,
+                                borderRadius: 10,
+                                width: "95%",
+                                maxWidth: "600px",
+                                maxHeight: "85vh",
+                                overflowY: "auto",
+                                boxShadow: "0 10px 30px rgba(0,0,0,0.2)",
+                            }}
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+                                <h3 style={{ margin: 0 }}>Recent Restaurant Reviews</h3>
+                                <button
+                                    onClick={handleCloseRestaurantReviewsModal}
+                                    style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '20px', color: '#333' }}
+                                >
+                                    <FaTimes />
+                                </button>
+                            </div>
+
+                            {restaurantReviewsLoading ? (
+                                <p style={{ textAlign: 'center' }}>Loading reviews...</p>
+                            ) : restaurantReviews.length > 0 ? (
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: 15 }}>
+                                    {restaurantReviews.slice(0, 10).map((review: any) => (
+                                        <div key={review.review_id || review.comment_id} style={{ border: '1px solid #eee', padding: 15, borderRadius: 5 }}>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                                                <div style={{ display: 'flex', gap: 2 }}>{renderStars(review.stars)}</div>
+                                                <span style={{ fontSize: 12, color: '#999' }}>
+                                                    {review.stars} star{review.stars !== 1 ? 's' : ''}
+                                                </span>
+                                            </div>
+                                            <p style={{ margin: '8px 0', fontStyle: 'italic', color: '#666' }}>
+                                                "{review.comment}"
+                                            </p>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <p style={{ textAlign: 'center', color: '#666' }}>No reviews available.</p>
                             )}
                         </div>
                     </div>

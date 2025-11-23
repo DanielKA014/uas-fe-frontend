@@ -22,7 +22,7 @@ export default function Home() {
           alt="Hero Image"
           fill
           className="object-cover"
-          style={{ zIndex: -1, opacity: 1 }}
+          style={{ zIndex: -1, opacity: 1, objectFit: 'cover', objectPosition: 'center' }}
           priority
         />
         <div className="d-flex flex-column justify-content-center align-items-center vh-100">

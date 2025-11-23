@@ -70,7 +70,7 @@ export default function AdminTopbarUser() {
             variant="light"
             id="admin-user-dropdown"
             className="d-flex align-items-center border-0"
-            style={{ backgroundColor: 'transparent' }}
+            style={{ backgroundColor: 'transparent', whiteSpace: 'nowrap' }}
           >
             <Image
               src="/images/logo.png"

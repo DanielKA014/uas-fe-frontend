@@ -3,6 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import Image from "next/image";
 import React from 'react'
 import { Col, Container, Row } from "react-bootstrap";
+import "./page.css";
 
 const page = () => {
   return (
@@ -21,9 +22,9 @@ const page = () => {
         </Col>
 
         {/* Right side: Text */}
-        <Col md={6} style={{textAlign: 'justify'}}>
+        <Col md={6} className="history-text">
           <h1 className="fs-1 fw-bold mb-4">Our History Progress</h1>
-          <p style={{ textAlign: "justify", lineHeight: "1.75"}}>
+          <p style={{ lineHeight: "1.75"}}>
             Semuanya berawal pada tahun 2001, pada saat warung makan ini masih berlokasi di samping eks kantor walikota Jakarta Barat lama (sudah digusur).
             Warung ini berawal dengan tempat yang kecil. Meskipun demikian, kami tetap berupaya menyajikan hidangan yang terbaik sedari awal hingga sekarang
             dengan bumbu-bumbu kami yang khas sekali.
