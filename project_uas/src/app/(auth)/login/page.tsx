@@ -76,7 +76,7 @@ export default function Login() {
 
   return (
     <Form id="loginForm" onSubmit={handleLogin}>
-      <div className="parent container d-flex justify-content-center align-items-center h-100">
+      <div className="parent container d-flex justify-content-center align-items-center h-100" style={{ paddingTop: 64 }}>
         {loading && <LoadingSpinner fullScreen size="lg" />}
         
         {!loading && (

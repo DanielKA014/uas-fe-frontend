@@ -205,14 +205,14 @@ export default function ProfilePage() {
 
   if (!user) {
     return (
-      <Container className="py-5">
+      <Container className="py-5" style={{ paddingTop: 64 }}>
         <Alert variant="danger">Failed to load profile</Alert>
       </Container>
     );
   }
 
   return (
-    <Container className="py-5">
+    <Container className="py-5" style={{ paddingTop: 64 }}>
       <Row className="justify-content-center">
         <Col md={8}>
           {error && <Alert variant="danger" onClose={() => setError(null)} dismissible>{error}</Alert>}

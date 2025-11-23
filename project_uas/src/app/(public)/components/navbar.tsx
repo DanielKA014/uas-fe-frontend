@@ -123,12 +123,12 @@ export default function NavbarComponent() {
                                 <Nav.Link
                                     key={href}
                                     href={href}
-                                    className={`nav-link rounded py-1 px-3 ${
+                                    className={`nav-link ${
                                         isActive
-                                            ? "fw-semibold text-dark bg-light rounded-pill mx-2"
-                                            : "text-white mx-2"
+                                            ? "fw-semibold text-dark bg-light rounded-pill mx-1"
+                                            : "text-white mx-1"
                                     }`}
-                                    style={{ textAlign: 'center', width: '100%' }}
+                                    style={{ textAlign: 'center', padding: '0.35rem 0.75rem', fontSize: '0.9rem' }}
                                 >
                                     {label}
                                 </Nav.Link>
@@ -139,7 +139,7 @@ export default function NavbarComponent() {
                     {/* Jika user BELUM login maka bakal tampilkan tombol Login */}
                     {!user && (
                         <Link href="/login">
-                            <Button variant="outline-success" className="ms-lg-3 px-4" style={{ width: '100%' }}>
+                            <Button variant="outline-success" className="ms-lg-3 px-3" style={{ whiteSpace: 'nowrap' }}>
                                 Login
                             </Button>
                         </Link>
