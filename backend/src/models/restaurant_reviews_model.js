@@ -40,3 +40,15 @@ exports.countReviews = async () => {
         throw new Error('Failed to count restaurant reviews', err)
     }
 }
+
+exports.countAverageRating = async () => {
+    try{
+        const sqlQuery = `SELECT (AVG(COALESCE(stars)))::numeric(2,1) 
+                            AS average_rating FROM restaurant_reviews`;
+        const res = await pool.query(sqlQuery);
+        return res.rows[0].average_rating;
+    } catch (err) {
+        console.log(err);
+        throw new Error('Failed to count average restaurant reviews rating', err)
+    }
+}
