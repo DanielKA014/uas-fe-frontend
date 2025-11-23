@@ -212,7 +212,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <Container className="py-5" style={{ paddingTop: 64 }}>
+    <Container className="py-5" style={{ paddingTop: 64, marginTop: 64 }}>
       <Row className="justify-content-center">
         <Col md={8}>
           {error && <Alert variant="danger" onClose={() => setError(null)} dismissible>{error}</Alert>}
