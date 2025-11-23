@@ -1,18 +1,19 @@
 .text-truncate-2 {
   overflow: hidden;
   display: -webkit-box;
-  display: box; 
+  display: box;
   -webkit-box-orient: vertical;
-  box-orient: vertical; 
+  box-orient: vertical;
   -webkit-line-clamp: 2;
-  line-clamp: 2; 
+  line-clamp: 2;
 }
 
 .card-hover-shadow {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
-.btn-hover-shadow, .card-hover-shadow {
+.btn-hover-shadow,
+.card-hover-shadow {
   transition: all 0.3s ease !important;
 }
 
@@ -26,3 +27,28 @@
   box-shadow: 0 8px 18px rgba(0, 0, 0, 0.25);
 }
 
+/* Hero section responsive fix */
+@media (max-width: 768px) {
+  section.position-relative {
+    min-height: 100vh;
+  }
+
+  section.position-relative .vh-100 {
+    min-height: 70vh;
+    padding: 40px 20px;
+  }
+
+  section.position-relative h1 {
+    font-size: 1.75rem !important;
+    line-height: 1.2;
+  }
+
+  section.position-relative p {
+    font-size: 0.95rem;
+  }
+
+  section.position-relative img {
+    object-fit: cover !important;
+    object-position: center !important;
+  }
+}

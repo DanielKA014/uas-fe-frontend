@@ -1,0 +1,17 @@
+/* Admin sidebar and main layout spacing */
+
+/* Desktop view: sidebar fixed on left, main pushed right */
+@media (min-width: 768px) {
+  .admin-main {
+    margin-left: 180px !important;
+    margin-right: 0;
+  }
+}
+
+/* Mobile view: no sidebar offset needed */
+@media (max-width: 767px) {
+  .admin-main {
+    margin-left: 0 !important;
+    margin-right: 0;
+  }
+}

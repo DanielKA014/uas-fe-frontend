@@ -31,14 +31,14 @@ export default function Sidebar() {
         </div>
 
         <div className="offcanvas-body d-flex flex-column justify-content-between">
-          <nav className="nav flex-column">
+          <nav className="nav flex-column gap-2">
             {navLinks.map(({ href, label }) => {
               const isActive = pathname === href;
               return (
                 <Link
                   key={href}
                   href={href}
-                  className={`nav-link rounded py-2 px-2 ${
+                  className={`nav-link rounded py-3 px-3 text-center ${
                     isActive ? 'bg-primary text-white fw-semibold' : 'text-dark'
                   }`}
                   data-bs-dismiss="offcanvas"
