@@ -81,7 +81,7 @@ export default function Register() {
 
   return (
     <Form id="registerForm" onSubmit={handleSubmit}>
-      <div className="parent container d-flex justify-content-center align-items-center h-100" style={{ marginTop: 74 }}>
+      <div className="parent container d-flex justify-content-center align-items-center h-100" style={{ marginTop: 90 }}>
         {loading && <LoadingSpinner fullScreen size="lg" />}
         
         {!loading && (
