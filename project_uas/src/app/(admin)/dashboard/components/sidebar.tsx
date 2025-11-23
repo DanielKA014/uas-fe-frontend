@@ -1,4 +1,5 @@
 'use client';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -24,6 +25,7 @@ export default function Sidebar() {
         tabIndex={-1}
         id="sidebarOffcanvas"
         aria-labelledby="sidebarOffcanvasLabel"
+        style={{ top: 56, height: 'calc(100% - 56px)', zIndex: 1090 }}
       >
         <div className="offcanvas-header border-bottom">
           <h5 className="fw-semibold">Admin Panel</h5>
@@ -62,6 +64,7 @@ export default function Sidebar() {
           width: '180px',
           zIndex: 10,
           borderRight: '1px solid #eee',
+          marginRight: '66px',
         }}
       >
         {/* Header */}
@@ -101,7 +104,10 @@ export default function Sidebar() {
       </aside>
 
       {/* Mobile Topbar (shows brand + hamburger) */}
-      <div className="d-md-none position-fixed top-0 start-0 left-0 w-100 bg-white shadow-sm" style={{ zIndex: 11, height: 56 }}>
+      <div
+        className="d-md-none position-fixed top-0 start-0 left-0 w-100 bg-white shadow-sm"
+        style={{ zIndex: 110, height: 56, marginBottom: 20 }}
+      >
         <div className="d-flex align-items-center justify-content-between px-3 h-100">
           <div className="d-flex align-items-center">
             <span className="fw-semibold">Admin Panel</span>
