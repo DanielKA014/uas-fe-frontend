@@ -30,25 +30,44 @@
 /* Hero section responsive fix */
 @media (max-width: 768px) {
   section.position-relative {
-    min-height: 100vh;
+    min-height: 320px;
+    padding-top: 56px;
+    padding-bottom: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
 
   section.position-relative .vh-100 {
-    min-height: 70vh;
-    padding: 40px 20px;
+    min-height: 220px;
+    height: auto;
+    padding: 24px 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
 
   section.position-relative h1 {
-    font-size: 1.75rem !important;
+    font-size: 1.2rem !important;
+    margin-bottom: 0.5rem;
     line-height: 1.2;
   }
 
   section.position-relative p {
-    font-size: 0.95rem;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
   }
 
   section.position-relative img {
+    min-height: 180px;
+    max-height: 320px;
     object-fit: cover !important;
     object-position: center !important;
+    opacity: 0.92;
+  }
+
+  section.position-relative .btn {
+    font-size: 1rem;
+    padding: 0.5rem 1.2rem;
   }
 }

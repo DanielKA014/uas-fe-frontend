@@ -24,7 +24,7 @@ const page = () => {
         {/* Right side: Text */}
         <Col md={6} className="history-text">
           <h1 className="fs-1 fw-bold mb-4">Our History Progress</h1>
-          <p style={{ lineHeight: "1.75"}}>
+          <p style={{ lineHeight: "1.75", textAlign: "justify"}}>
             Semuanya berawal pada tahun 2001, pada saat warung makan ini masih berlokasi di samping eks kantor walikota Jakarta Barat lama (sudah digusur).
             Warung ini berawal dengan tempat yang kecil. Meskipun demikian, kami tetap berupaya menyajikan hidangan yang terbaik sedari awal hingga sekarang
             dengan bumbu-bumbu kami yang khas sekali.

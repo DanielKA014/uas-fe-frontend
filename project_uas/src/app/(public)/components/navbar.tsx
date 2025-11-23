@@ -109,7 +109,14 @@ export default function NavbarComponent() {
                 <Navbar.Toggle aria-controls="navbarScroll" />
 
                 <Navbar.Collapse id="navbarScroll">
-                    <Nav className="mx-auto">
+                    <Nav
+                        className="mx-auto"
+                        style={{
+                            justifyContent: 'center',
+                            width: '100%',
+                            display: 'flex',
+                        }}
+                    >
                         {navLinks.map(({ href, label }) => {
                             const isActive = pathname === href;
                             return (
@@ -121,6 +128,7 @@ export default function NavbarComponent() {
                                             ? "fw-semibold text-dark bg-light rounded-pill mx-2"
                                             : "text-white mx-2"
                                     }`}
+                                    style={{ textAlign: 'center', width: '100%' }}
                                 >
                                     {label}
                                 </Nav.Link>
