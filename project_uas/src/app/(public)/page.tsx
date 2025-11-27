@@ -40,11 +40,11 @@ export default function Home() {
           >
             Explore Menu
           </Button>
-        </div>  
+        </div>
       </section>
 
       {/* About Section */}
-      <section className="bg-white text-center" style={{padding: "100px 0"}}>
+      <section className="bg-white text-center" style={{ padding: "100px 0" }}>
         <Container>
           <Row className="align-items-center text-md-start text-center">
             {/* Left side: Image */}
@@ -61,16 +61,15 @@ export default function Home() {
             {/* Right side: Text */}
             <Col md={6}>
               <h2 className="fw-bold mb-4">
-                We provide healthy food for your family & friends.
+                Kami Menyediakan Makanan Sehat Bagi keluarga & Teman Anda
               </h2>
               <p className="text-muted mb-4">
-                It all began in 2001 beside Walikota Lama, where our founders started with a small grill,
-                a family recipe, and a big dream. Through hard times and simple beginnings, they served
-                freshly grilled chicken with warmth that kept customers coming back.
+                Semuanya berawal pada tahun 2001, pada saat warung makan ini masih berlokasi di samping eks kantor walikota Jakarta Barat lama (sudah digusur).
+                Warung ini berawal dengan tempat yang kecil. Meskipun demikian, kami tetap berupaya menyajikan hidangan yang terbaik sedari awal hingga sekarang
+                dengan bumbu-bumbu kami yang khas sekali.
                 <br /><br />
-                In 2003, we moved beside Universitas Tarumanagara (UNTAR), where our little stall grew
-                into a local favorite. Even today, we stay true to our roots — grilling over open flames
-                and serving each dish with heart, passion, and family spirit.
+                Pada tahun 2003, kami pindah ke sebelah Universitas Tarumanagara (UNTAR), di mana warung kecil kami berkembang menjadi favorit lokal. Hingga kini, 
+                kami tetap setia pada akar kami — memanggang di atas api terbuka dan menyajikan setiap hidangan dengan hati, gairah, dan semangat kekeluargaan.
               </p>
               <a href="/about" className="btn btn-outline-danger rounded-pill btn-lg">
                 Learn More
@@ -82,7 +81,7 @@ export default function Home() {
 
 
       {/* Menu section */}
-      <section className="bg-light text-center vh-70" style={{padding: "100px 0"}}>
+      <section className="bg-light text-center vh-70" style={{ padding: "100px 0" }}>
         <Container>
           <h2 className="fw-bold mb-5 mt-2">
             Browse Our Menu
@@ -95,14 +94,14 @@ export default function Home() {
                   <FaDrumstickBite size={40} className="text-danger mb-3" />
                   <Card.Title className="fw-bold mb-2">Main Dish</Card.Title>
                   <Card.Text className="text-muted">
-                    Savor our signature grilled chicken, marinated to perfection and served with delicious sides.
+                    Nikmati ayam bakar andalan kami, yang direndam bumbu khas dan disajikan dengan lauk pelengkap yang lezat.
                   </Card.Text>
-                  <Button 
-                    variant="outline-danger" 
+                  <Button
+                    variant="outline-danger"
                     className="rounded-pill"
                     onClick={() => handleCategoryClick('Main Dish')}
                   >
-                    Explore Menu
+                    Telusuri Menu
                   </Button>
                 </Card.Body>
               </Card>
@@ -112,17 +111,16 @@ export default function Home() {
               <Card className="border-0 card-hover-shadow h-100">
                 <Card.Body>
                   <FaGlassWhiskey size={40} className="mb-3 text-danger" />
-                  <Card.Title>Drinks</Card.Title>
+                  <Card.Title>Beverages</Card.Title>
                   <Card.Text className="text-muted">
-                    In the new era of technology we look to the future with
-                    certainty and pride for our life.
+                    Nikmati minuman segar kami yang dibuat dari bahan-bahan alami untuk melengkapi hidangan Anda.
                   </Card.Text>
-                  <Button 
-                    variant="outline-danger" 
+                  <Button
+                    variant="outline-danger"
                     className="rounded-pill"
                     onClick={() => handleCategoryClick('Beverages')}
                   >
-                    Explore Menu
+                    Telusuri Menu
                   </Button>
                 </Card.Body>
               </Card>
@@ -134,15 +132,14 @@ export default function Home() {
                   <GiTomato size={40} className="mb-3 text-danger" />
                   <Card.Title>Vegetables</Card.Title>
                   <Card.Text className="text-muted">
-                    In the new era of technology we look to the future with
-                    certainty and pride for our life.
+                    Nikmati hidangan sayuran segar dan bergizi yang disiapkan dengan cita rasa istimewa.
                   </Card.Text>
-                  <Button 
-                    variant="outline-danger" 
+                  <Button
+                    variant="outline-danger"
                     className="rounded-pill"
                     onClick={() => handleCategoryClick('Vegetables')}
                   >
-                    Explore Menu
+                    Telusuri Menu
                   </Button>
                 </Card.Body>
               </Card>
@@ -154,15 +151,14 @@ export default function Home() {
                   <FaCube size={40} className="mb-3 text-danger" />
                   <Card.Title>Add Ons</Card.Title>
                   <Card.Text className="text-muted">
-                    In the new era of technology we look to the future with
-                    certainty and pride for our life.
+                    Nikmati tambahan lezat untuk melengkapi hidangan utama Anda.
                   </Card.Text>
-                  <Button 
-                    variant="outline-danger" 
+                  <Button
+                    variant="outline-danger"
                     className="rounded-pill"
                     onClick={() => handleCategoryClick('Add-on')}
                   >
-                    Explore Menu
+                    Telusuri Menu
                   </Button>
                 </Card.Body>
               </Card>
@@ -171,7 +167,7 @@ export default function Home() {
         </Container>
       </section>
 
-      
+
     </main>
   );
 }
