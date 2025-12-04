@@ -1,5 +1,5 @@
 ## Website Link
-cek deployment ini : https://uas-fe-frontend.vercel.app\n
+cek deployment ini : https://uas-fe-frontend.vercel.app \n
 repo backend only : https://github.com/VincentWu503/uas-fe-backend
 
 ## Setup Project di Local
